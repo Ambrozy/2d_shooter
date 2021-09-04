@@ -38,6 +38,10 @@ module.exports = {
                 test: /\.(gif|jpg|png|svg)$/,
                 type: 'asset/resource',
             },
+            {
+                test: /\.(shader|glsl)$/,
+                type: 'asset/source',
+            },
         ],
     },
     plugins: [
