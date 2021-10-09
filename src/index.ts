@@ -1,10 +1,11 @@
 import { game } from './core/game';
 import { working } from './core/worker';
-import { player } from './actors/player';
+import { inverseCameraMapping } from './core/camera';
+import { playerInstance, spawnPlayer } from './actors/player';
 import { spawnBullet } from './actors/bullet';
 import { spawnEnemy } from './actors/enemy';
 import { printFPS } from './utils/fps';
-import { getRotationRelatedToCenter } from './utils/helpers';
+import { getRotationRelatedToPlayer } from './utils/playerHelpers';
 
 import './index.scss';
 
@@ -17,7 +18,6 @@ const loop = (timestamp: number) => {
     printFPS(timestamp);
 
     clearScreen();
-    player({ gunRotation: game.mouseRotation });
     working.workers.forEach((worker) => {
         worker.render(timestamp - lastRender);
     });
@@ -31,13 +31,29 @@ const loop = (timestamp: number) => {
 
 window.onload = () => {
     game.canvas.addEventListener('mousemove', (e) => {
-        game.mousePosition = { x: e.offsetX, y: e.offsetY };
-        game.mouseRotation = getRotationRelatedToCenter(game.mousePosition);
+        game.mousePosition = inverseCameraMapping({
+            x: e.offsetX,
+            y: e.offsetY,
+        });
+        game.mouseRotation = getRotationRelatedToPlayer(game.mousePosition);
     });
     game.canvas.addEventListener('mousedown', () => {
         spawnBullet();
     });
+    document.addEventListener('keydown', (e) => {
+        switch (e.key) {
+            case 'ArrowRight':
+                return playerInstance.moveRight();
+            case 'ArrowLeft':
+                return playerInstance.moveLeft();
+            case 'ArrowUp':
+                return playerInstance.moveUp();
+            case 'ArrowDown':
+                return playerInstance.moveDown();
+        }
+    });
 
+    spawnPlayer();
     for (let i = 0; i < 10; i++) {
         spawnEnemy();
     }

@@ -2,6 +2,7 @@ import {
     BULLET_WORKER_TYPE,
     EMPTY_WORKER_TYPE,
     ENEMY_WORKER_TYPE,
+    PLAYER_WORKER_TYPE,
 } from '../actors/types';
 import { isCollision } from '../utils/helpers';
 import { Circle } from './game';
@@ -49,6 +50,9 @@ export const working: WorkersState = {
         const bullets = this.workers.filter(
             (worker: Worker) => worker.type === BULLET_WORKER_TYPE,
         );
+        const playerInstance = this.workers.find(
+            (worker: Worker) => worker.type === PLAYER_WORKER_TYPE,
+        );
 
         enemies.forEach((enemy: Worker) => {
             bullets.forEach((bullet: Worker) => {
@@ -61,6 +65,13 @@ export const working: WorkersState = {
                     bullet.isDead = true;
                 }
             });
+
+            if (
+                !enemy.isDead &&
+                isCollision(playerInstance.position, enemy.position)
+            ) {
+                playerInstance.isDead = true;
+            }
         });
 
         this.workers = this.workers.filter(

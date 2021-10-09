@@ -1,34 +1,39 @@
-import { game } from '../core/game';
+import { game, Point, Rotation } from '../core/game';
+import { getEmptyWorker, working } from '../core/worker';
+import {
+    camera,
+    CAMERA_SPEED,
+    cameraMapping,
+    gameMap,
+    MAP_HEIGHT,
+    MAP_WIDTH,
+} from '../core/camera';
+import { PLAYER_WORKER_TYPE } from './types';
 
 export const PLAYER_RADIUS = 12;
 export const PLAYER_COLOR = '#91e1ff';
 export const PLAYER_GUN_RADIUS = 5;
 export const PLAYER_GUN_COLOR = '#ff8484';
+export const DEAD_PLAYER_RADIUS = 8;
 
 export interface PlayerProps {
-    gunRotation: {
-        sin: number;
-        cos: number;
-    };
+    position: Point;
+    gunRotation: Rotation;
 }
 
-export const player = ({ gunRotation: { sin, cos } }: PlayerProps) => {
+export const player = ({
+    position: { x, y },
+    gunRotation: { sin, cos },
+}: PlayerProps) => {
     game.context.beginPath();
-    game.context.arc(
-        game.center.x,
-        game.center.y,
-        PLAYER_RADIUS,
-        0,
-        2 * Math.PI,
-        false,
-    );
+    game.context.arc(x, y, PLAYER_RADIUS, 0, 2 * Math.PI, false);
     game.context.fillStyle = PLAYER_COLOR;
     game.context.fill();
 
     game.context.beginPath();
     game.context.arc(
-        game.center.x + cos * PLAYER_RADIUS,
-        game.center.y + sin * PLAYER_RADIUS,
+        x + cos * PLAYER_RADIUS,
+        y + sin * PLAYER_RADIUS,
         PLAYER_GUN_RADIUS,
         0,
         2 * Math.PI,
@@ -36,4 +41,71 @@ export const player = ({ gunRotation: { sin, cos } }: PlayerProps) => {
     );
     game.context.fillStyle = PLAYER_GUN_COLOR;
     game.context.fill();
+};
+
+export const playerDead = ({ x, y }: Point) => {
+    game.context.beginPath();
+    game.context.arc(x, y, PLAYER_RADIUS, 0, 2 * Math.PI, false);
+    game.context.arc(x, y, DEAD_PLAYER_RADIUS, 0, 2 * Math.PI, true);
+    game.context.fillStyle = PLAYER_COLOR;
+    game.context.fill();
+};
+
+export const playerWorker = ({ x, y }: Point) => ({
+    ...getEmptyWorker(),
+    type: PLAYER_WORKER_TYPE,
+    deadAnimationTime: 100,
+    position: {
+        x,
+        y,
+        radius: PLAYER_RADIUS,
+    },
+    render(deltaMilliseconds: number) {
+        if (this.isDead) {
+            this.deadTime += deltaMilliseconds;
+        }
+
+        if (this.isDead) {
+            return playerDead(cameraMapping(this.position));
+        }
+
+        player({
+            position: cameraMapping(this.position),
+            gunRotation: game.mouseRotation,
+        });
+    },
+    moveRight() {
+        if (this.position.x >= game.canvas.width / 2) {
+            camera.moveRight();
+        }
+        this.position.x += CAMERA_SPEED;
+        this.position.x = Math.min(MAP_WIDTH - PLAYER_RADIUS, this.position.x);
+    },
+    moveLeft() {
+        if (this.position.x <= MAP_WIDTH - game.canvas.width / 2) {
+            camera.moveLeft();
+        }
+        this.position.x -= CAMERA_SPEED;
+        this.position.x = Math.max(PLAYER_RADIUS, this.position.x);
+    },
+    moveUp() {
+        if (this.position.y <= MAP_HEIGHT - game.canvas.width / 2) {
+            camera.moveUp();
+        }
+        this.position.y -= CAMERA_SPEED;
+        this.position.y = Math.max(PLAYER_RADIUS, this.position.y);
+    },
+    moveDown() {
+        if (this.position.y >= game.canvas.width / 2) {
+            camera.moveDown();
+        }
+        this.position.y += CAMERA_SPEED;
+        this.position.y = Math.min(MAP_HEIGHT - PLAYER_RADIUS, this.position.y);
+    },
+});
+
+export const playerInstance = playerWorker(gameMap.center);
+
+export const spawnPlayer = () => {
+    working.add(playerInstance);
 };

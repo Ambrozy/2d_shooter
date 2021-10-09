@@ -1,10 +1,8 @@
 import { game, Point } from '../core/game';
-import {
-    clipCanvas,
-    getRotationRelatedToCenter,
-    isCollision,
-} from '../utils/helpers';
 import { getEmptyWorker, working } from '../core/worker';
+import { cameraMapping, gameMap } from '../core/camera';
+import { clipMap, isCollision } from '../utils/helpers';
+import { getRotationRelatedToPlayer } from '../utils/playerHelpers';
 import { ENEMY_WORKER_TYPE } from './types';
 
 export const ENEMY_RADIUS = 7;
@@ -33,10 +31,8 @@ export const enemyDead = ({ x, y }: EnemyProps) => {
     game.context.fill();
 };
 
-const emptyWorker = getEmptyWorker();
-
 export const enemyWorker = ({ x, y }: EnemyProps) => ({
-    ...emptyWorker,
+    ...getEmptyWorker(),
     type: ENEMY_WORKER_TYPE,
     deadAnimationTime: 100,
     position: {
@@ -50,18 +46,18 @@ export const enemyWorker = ({ x, y }: EnemyProps) => ({
         }
 
         if (this.isDead) {
-            return enemyDead(this.position);
+            return enemyDead(cameraMapping(this.position));
         }
 
-        const rotation = getRotationRelatedToCenter(this.position as Point);
+        const rotation = getRotationRelatedToPlayer(this.position as Point);
 
         this.position.x += -rotation.cos * deltaMilliseconds * ENEMY_SPEED;
         this.position.y += -rotation.sin * deltaMilliseconds * ENEMY_SPEED;
-        ({ x: this.position.x, y: this.position.y } = clipCanvas(
+        ({ x: this.position.x, y: this.position.y } = clipMap(
             this.position,
             DEAD_ENEMY_RADIUS,
         ));
-        enemy(this.position);
+        enemy(cameraMapping(this.position));
     },
 });
 
@@ -69,12 +65,12 @@ const clipCenter = (position: Point, offset: number): Point => {
     if (
         isCollision(
             { ...position, radius: 0 },
-            { ...game.center, radius: offset },
+            { ...gameMap.center, radius: offset },
         )
     ) {
         return {
-            x: position.x + Math.sign(position.x - game.center.x) * offset,
-            y: position.y + Math.sign(position.y - game.center.y) * offset,
+            x: position.x + Math.sign(position.x - gameMap.center.x) * offset,
+            y: position.y + Math.sign(position.y - gameMap.center.y) * offset,
         };
     }
 
@@ -83,7 +79,7 @@ const clipCenter = (position: Point, offset: number): Point => {
 
 export const spawnEnemy = () => {
     const spawnCoordinates = clipCenter(
-        clipCanvas(
+        clipMap(
             {
                 x: Math.random() * game.canvas.width,
                 y: Math.random() * game.canvas.height,
