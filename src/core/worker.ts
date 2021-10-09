@@ -5,9 +5,10 @@ import {
     PLAYER_WORKER_TYPE,
 } from '../actors/types';
 import { isCollision } from '../utils/helpers';
-import { Circle } from './game';
+import { updateHealth, updateScore } from '../utils/statistic';
+import { Circle, game } from './game';
 
-export interface Worker {
+export interface Worker extends Record<string, unknown> {
     type: string;
     deadAnimationTime: number;
     isDead: boolean;
@@ -63,6 +64,7 @@ export const working: WorkersState = {
                 ) {
                     enemy.isDead = true;
                     bullet.isDead = true;
+                    updateScore(enemy.params.reward as number);
                 }
             });
 
@@ -70,7 +72,10 @@ export const working: WorkersState = {
                 !enemy.isDead &&
                 isCollision(playerInstance.position, enemy.position)
             ) {
-                playerInstance.isDead = true;
+                if (game.health <= 0) {
+                    playerInstance.isDead = true;
+                }
+                updateHealth(enemy.params.attack as number);
             }
         });
 

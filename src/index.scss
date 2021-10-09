@@ -9,6 +9,8 @@ body {
   height: 100vh;
   margin: 0;
   background: black;
+  font-size: 14px;
+  color: white;
 }
 
 #fps {
@@ -23,4 +25,29 @@ body {
 
 canvas {
   user-select: none;
+}
+
+#statistic {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 200px;
+  text-align: left;
+  padding: 2px 4px;
+}
+
+.health {
+  position: relative;
+  width: 100%;
+  height: 20px;
+  margin: 6px 0;
+  background: #7b0000;
+  border: 1px solid #7b0000;
+}
+.health-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: red;
 }

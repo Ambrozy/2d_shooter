@@ -1,11 +1,13 @@
 import { game } from './core/game';
 import { working } from './core/worker';
 import { inverseCameraMapping } from './core/camera';
+import { addKeyboardListeners, pressedKeys } from './core/keyboard';
 import { playerInstance, spawnPlayer } from './actors/player';
 import { spawnBullet } from './actors/bullet';
 import { spawnEnemy } from './actors/enemy';
 import { printFPS } from './utils/fps';
 import { getRotationRelatedToPlayer } from './utils/playerHelpers';
+import { updateAmmo, updateHealth, updateScore } from './utils/statistic';
 
 import './index.scss';
 
@@ -22,7 +24,18 @@ const loop = (timestamp: number) => {
         worker.render(timestamp - lastRender);
     });
     working.update();
-    console.log(working.workers);
+
+    if (pressedKeys.has('ArrowRight')) {
+        playerInstance.moveRight();
+    } else if (pressedKeys.has('ArrowLeft')) {
+        playerInstance.moveLeft();
+    }
+    if (pressedKeys.has('ArrowUp')) {
+        playerInstance.moveUp();
+    } else if (pressedKeys.has('ArrowDown')) {
+        playerInstance.moveDown();
+    }
+    // console.log(working.workers);
 
     lastRender = timestamp;
 
@@ -38,25 +51,20 @@ window.onload = () => {
         game.mouseRotation = getRotationRelatedToPlayer(game.mousePosition);
     });
     game.canvas.addEventListener('mousedown', () => {
-        spawnBullet();
-    });
-    document.addEventListener('keydown', (e) => {
-        switch (e.key) {
-            case 'ArrowRight':
-                return playerInstance.moveRight();
-            case 'ArrowLeft':
-                return playerInstance.moveLeft();
-            case 'ArrowUp':
-                return playerInstance.moveUp();
-            case 'ArrowDown':
-                return playerInstance.moveDown();
+        if (game.ammunition > 0) {
+            spawnBullet();
+            updateAmmo(1);
         }
     });
+    addKeyboardListeners();
 
     spawnPlayer();
     for (let i = 0; i < 10; i++) {
         spawnEnemy();
     }
 
+    updateScore(0);
+    updateAmmo(0);
+    updateHealth(0);
     window.requestAnimationFrame(loop);
 };

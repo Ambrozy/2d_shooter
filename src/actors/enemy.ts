@@ -10,6 +10,8 @@ export const ENEMY_COLOR = '#dd3d3d';
 export const ENEMY_SPEED = 0.01;
 export const DEAD_ENEMY_RADIUS = 4;
 export const MIN_SPAWN_RADIUS = 300;
+export const ENEMY_REWARD = 100;
+export const ENEMY_ATTACK = 10;
 
 export interface EnemyProps {
     x: number;
@@ -39,6 +41,10 @@ export const enemyWorker = ({ x, y }: EnemyProps) => ({
         x,
         y,
         radius: ENEMY_RADIUS,
+    },
+    params: {
+        reward: ENEMY_REWARD,
+        attack: ENEMY_ATTACK,
     },
     render(deltaMilliseconds: number) {
         if (this.isDead) {
