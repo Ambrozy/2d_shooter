@@ -1,32 +1,54 @@
+import { game } from './core/game';
+import { working } from './core/worker';
+import { player } from './actors/player';
+import { bulletWorker } from './actors/bullet';
+import { printFPS } from './utils/fps';
+
 import './index.scss';
-import { createGame, GameInstance, INITIAL_WIDTH } from './utils/gl';
-import { drawCircle } from './utils/paint';
 
-let game: GameInstance = null;
 let lastRender = 0;
-let x = 50;
-const color = [Math.random(), Math.random(), Math.random(), 1];
-const loop = (timestamp: number) => {
-    const progress = timestamp - lastRender;
 
-    x += progress;
-    if (x > INITIAL_WIDTH) {
-        x -= INITIAL_WIDTH;
+const clearScreen = () =>
+    game.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
+const getMouseRotation = () => {
+    const y = game.mousePosition.y - game.center.y;
+    const x = game.mousePosition.x - game.center.x;
+
+    if (x === 0) {
+        return { sin: 1, cos: 0 };
     }
 
-    game.gl.clear(game.gl.COLOR_BUFFER_BIT);
-    drawCircle(game, {
-        x,
-        y: x / 2,
-        r: 50,
-        color,
+    const k2 = (y / x) * (y / x);
+    const cos = Math.sqrt(1 / (k2 + 1)) * Math.sign(x);
+    const sin = Math.sqrt(k2 / (k2 + 1)) * Math.sign(y);
+
+    return { sin, cos };
+};
+
+const loop = (timestamp: number) => {
+    printFPS(timestamp);
+
+    clearScreen();
+    player({ gunRotation: game.mouseRotation });
+    working.workers.forEach((worker) => {
+        worker.render(timestamp - lastRender);
     });
+    working.update();
+    console.log(working.workers, working.workers.length);
 
     lastRender = timestamp;
+
     window.requestAnimationFrame(loop);
 };
 
 window.onload = () => {
-    game = createGame();
+    game.canvas.addEventListener('mousemove', (e) => {
+        game.mousePosition = { x: e.offsetX, y: e.offsetY };
+        game.mouseRotation = getMouseRotation();
+    });
+    game.canvas.addEventListener('mousedown', () => {
+        working.add(bulletWorker(game.mouseRotation));
+    });
+
     window.requestAnimationFrame(loop);
 };
