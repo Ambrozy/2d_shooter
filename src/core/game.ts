@@ -27,6 +27,7 @@ const mouseRotation: Rotation = { sin: 0, cos: 1 };
 
 export const MAX_HEALTH = 100;
 export const INITIAL_AMMUNITION = 100;
+
 export const game: Game = {
     canvas,
     context,

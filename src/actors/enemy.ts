@@ -1,5 +1,5 @@
 import { game, Point } from '../core/game';
-import { getEmptyWorker, working } from '../core/worker';
+import { getEmptyWorker, workManager } from '../core/worker';
 import { cameraMapping, gameMap } from '../core/camera';
 import { clipMap, isCollision } from '../utils/helpers';
 import { getRotationRelatedToPlayer } from '../utils/playerHelpers';
@@ -49,9 +49,7 @@ export const enemyWorker = ({ x, y }: EnemyProps) => ({
     render(deltaMilliseconds: number) {
         if (this.isDead) {
             this.deadTime += deltaMilliseconds;
-        }
 
-        if (this.isDead) {
             return enemyDead(cameraMapping(this.position));
         }
 
@@ -95,5 +93,5 @@ export const spawnEnemy = () => {
         MIN_SPAWN_RADIUS,
     );
 
-    working.add(enemyWorker(spawnCoordinates));
+    workManager.add(enemyWorker(spawnCoordinates));
 };

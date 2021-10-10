@@ -1,7 +1,7 @@
 import { game, Point, Rotation } from '../core/game';
-import { PLAYER_RADIUS, playerInstance } from './player';
+import { getPlayerInstance, PLAYER_RADIUS } from './player';
 import { isOutOfMap } from '../utils/helpers';
-import { getEmptyWorker, working } from '../core/worker';
+import { getEmptyWorker, workManager } from '../core/worker';
 import { BULLET_WORKER_TYPE } from './types';
 import { cameraMapping } from '../core/camera';
 
@@ -31,8 +31,8 @@ export const bulletWorker = ({ sin, cos }: Rotation) => ({
     ...getEmptyWorker(),
     type: BULLET_WORKER_TYPE,
     position: {
-        x: playerInstance.position.x + cos * PLAYER_RADIUS,
-        y: playerInstance.position.y + sin * PLAYER_RADIUS,
+        x: getPlayerInstance().position.x + cos * PLAYER_RADIUS,
+        y: getPlayerInstance().position.y + sin * PLAYER_RADIUS,
         radius: BULLET_LEN,
     },
     params: {
@@ -53,5 +53,5 @@ export const bulletWorker = ({ sin, cos }: Rotation) => ({
 });
 
 export const spawnBullet = () => {
-    working.add(bulletWorker(game.mouseRotation));
+    workManager.add(bulletWorker(game.mouseRotation));
 };

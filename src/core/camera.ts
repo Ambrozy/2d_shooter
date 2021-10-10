@@ -7,6 +7,7 @@ export const CAMERA_SPEED = 10;
 export interface Camera {
     readonly x: number;
     readonly y: number;
+    readonly reset: () => void;
     readonly moveRight: () => void;
     readonly moveLeft: () => void;
     readonly moveUp: () => void;
@@ -28,6 +29,10 @@ export const gameMap: Map = {
 export const camera: Camera = {
     x: gameMap.center.x,
     y: gameMap.center.y,
+    reset() {
+        this.x = gameMap.center.x;
+        this.y = gameMap.center.y;
+    },
     moveRight() {
         this.x += CAMERA_SPEED;
         this.x = Math.min(MAP_WIDTH - game.canvas.width / 2, this.x);

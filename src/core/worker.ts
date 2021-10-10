@@ -1,12 +1,5 @@
-import {
-    BULLET_WORKER_TYPE,
-    EMPTY_WORKER_TYPE,
-    ENEMY_WORKER_TYPE,
-    PLAYER_WORKER_TYPE,
-} from '../actors/types';
-import { isCollision } from '../utils/helpers';
-import { updateHealth, updateScore } from '../utils/statistic';
-import { Circle, game } from './game';
+import { EMPTY_WORKER_TYPE } from '../actors/types';
+import { Circle } from './game';
 
 export interface Worker extends Record<string, unknown> {
     type: string;
@@ -19,8 +12,9 @@ export interface Worker extends Record<string, unknown> {
     removeCondition: () => boolean;
 }
 
-export interface WorkersState {
+export interface WorkersManager {
     workers: readonly Worker[];
+    clear: () => void;
     update: () => void;
     add: (worker: Worker) => void;
 }
@@ -42,43 +36,12 @@ export const getEmptyWorker = (): Worker => ({
     },
 });
 
-export const working: WorkersState = {
+export const workManager: WorkersManager = {
     workers: [],
+    clear() {
+        this.workers = [];
+    },
     update() {
-        const enemies = this.workers.filter(
-            (worker: Worker) => worker.type === ENEMY_WORKER_TYPE,
-        );
-        const bullets = this.workers.filter(
-            (worker: Worker) => worker.type === BULLET_WORKER_TYPE,
-        );
-        const playerInstance = this.workers.find(
-            (worker: Worker) => worker.type === PLAYER_WORKER_TYPE,
-        );
-
-        enemies.forEach((enemy: Worker) => {
-            bullets.forEach((bullet: Worker) => {
-                if (
-                    !bullet.isDead &&
-                    !enemy.isDead &&
-                    isCollision(bullet.position, enemy.position)
-                ) {
-                    enemy.isDead = true;
-                    bullet.isDead = true;
-                    updateScore(enemy.params.reward as number);
-                }
-            });
-
-            if (
-                !enemy.isDead &&
-                isCollision(playerInstance.position, enemy.position)
-            ) {
-                if (game.health <= 0) {
-                    playerInstance.isDead = true;
-                }
-                updateHealth(enemy.params.attack as number);
-            }
-        });
-
         this.workers = this.workers.filter(
             (worker: Worker) => !worker.removeCondition(),
         );

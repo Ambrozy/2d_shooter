@@ -1,5 +1,5 @@
 import { game, Point, Rotation } from '../core/game';
-import { getEmptyWorker, working } from '../core/worker';
+import { getEmptyWorker, workManager } from '../core/worker';
 import {
     camera,
     CAMERA_SPEED,
@@ -63,9 +63,7 @@ export const playerWorker = ({ x, y }: Point) => ({
     render(deltaMilliseconds: number) {
         if (this.isDead) {
             this.deadTime += deltaMilliseconds;
-        }
 
-        if (this.isDead) {
             return playerDead(cameraMapping(this.position));
         }
 
@@ -104,8 +102,11 @@ export const playerWorker = ({ x, y }: Point) => ({
     },
 });
 
-export const playerInstance = playerWorker(gameMap.center);
+let playerInstance = playerWorker(gameMap.center);
+
+export const getPlayerInstance = () => playerInstance;
 
 export const spawnPlayer = () => {
-    working.add(playerInstance);
+    playerInstance = playerWorker(gameMap.center);
+    workManager.add(playerInstance);
 };

@@ -1,9 +1,9 @@
 import { Point, Rotation } from '../core/game';
-import { playerInstance } from '../actors/player';
+import { getPlayerInstance } from '../actors/player';
 
 export const getRotationRelatedToPlayer = (position: Point): Rotation => {
-    const y = position.y - playerInstance.position.y;
-    const x = position.x - playerInstance.position.x;
+    const y = position.y - getPlayerInstance().position.y;
+    const x = position.x - getPlayerInstance().position.x;
 
     if (x === 0) {
         return { sin: 1, cos: 0 };
