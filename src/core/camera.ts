@@ -2,7 +2,7 @@ import { game, Point } from './game';
 
 export const MAP_WIDTH = 1600;
 export const MAP_HEIGHT = 1200;
-export const CAMERA_SPEED = 10;
+export const CAMERA_SPEED = 3;
 
 export interface Camera {
     readonly x: number;

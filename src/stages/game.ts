@@ -6,11 +6,15 @@ import {
 import { game, INITIAL_AMMUNITION, MAX_HEALTH } from '../core/game';
 import { Worker, workManager } from '../core/worker';
 import { screenManager } from '../core/screen';
-import { camera, inverseCameraMapping } from '../core/camera';
+import { camera, gameMap, inverseCameraMapping } from '../core/camera';
 import { getPlayerInstance, spawnPlayer } from '../actors/player';
 import { spawnBullet } from '../actors/bullet';
-import { spawnEnemy } from '../actors/enemy';
-import { BULLET_WORKER_TYPE, ENEMY_WORKER_TYPE } from '../actors/types';
+import { spawnEnemySpawner } from '../actors/enemySpawner';
+import {
+    BULLET_WORKER_TYPE,
+    ENEMY_WORKER_TYPE,
+    SPAWNER_WORKER_TYPE,
+} from '../actors/types';
 import {
     showStatistics,
     updateAmmo,
@@ -51,15 +55,14 @@ export const gameScreen = {
             playerInstance.moveDown();
         }
 
-        if (playerInstance.removeCondition()) {
-            screenManager.changeScreen(DEAD_SCREEN);
-        }
-
         const enemies = workManager.workers.filter(
             (worker: Worker) => worker.type === ENEMY_WORKER_TYPE,
         );
         const bullets = workManager.workers.filter(
             (worker: Worker) => worker.type === BULLET_WORKER_TYPE,
+        );
+        const spawners = workManager.workers.filter(
+            (worker: Worker) => worker.type === SPAWNER_WORKER_TYPE,
         );
 
         enemies.forEach((enemy: Worker) => {
@@ -86,7 +89,10 @@ export const gameScreen = {
             }
         });
 
-        if (enemies.length === 0) {
+        if (playerInstance.removeCondition()) {
+            screenManager.changeScreen(DEAD_SCREEN);
+        }
+        if (enemies.length === 0 && spawners.length === 0) {
             screenManager.changeScreen(WIN_SCREEN);
         }
 
@@ -100,13 +106,16 @@ export const gameScreen = {
         game.canvas.addEventListener('mousedown', onMouseDown);
         addKeyboardListeners();
 
-        workManager.clear();
+        camera.reset();
+        workManager.reset();
         spawnPlayer();
-        for (let i = 0; i < 10; i++) {
-            spawnEnemy();
+        for (let i = 0; i < 100; i++) {
+            spawnEnemySpawner({
+                x: Math.random() * gameMap.width,
+                y: Math.random() * gameMap.height,
+            });
         }
 
-        camera.reset();
         game.score = 0;
         game.ammunition = INITIAL_AMMUNITION;
         game.health = MAX_HEALTH;

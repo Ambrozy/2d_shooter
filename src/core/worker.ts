@@ -14,7 +14,7 @@ export interface Worker extends Record<string, unknown> {
 
 export interface WorkersManager {
     workers: readonly Worker[];
-    clear: () => void;
+    reset: () => void;
     update: () => void;
     add: (worker: Worker) => void;
 }
@@ -38,7 +38,7 @@ export const getEmptyWorker = (): Worker => ({
 
 export const workManager: WorkersManager = {
     workers: [],
-    clear() {
+    reset() {
         this.workers = [];
     },
     update() {

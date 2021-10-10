@@ -1,7 +1,7 @@
 import { game, Point } from '../core/game';
 import { getEmptyWorker, workManager } from '../core/worker';
-import { cameraMapping, gameMap } from '../core/camera';
-import { clipMap, isCollision } from '../utils/helpers';
+import { cameraMapping } from '../core/camera';
+import { clipMap } from '../utils/helpers';
 import { getRotationRelatedToPlayer } from '../utils/playerHelpers';
 import { ENEMY_WORKER_TYPE } from './types';
 
@@ -13,19 +13,14 @@ export const MIN_SPAWN_RADIUS = 300;
 export const ENEMY_REWARD = 100;
 export const ENEMY_ATTACK = 10;
 
-export interface EnemyProps {
-    x: number;
-    y: number;
-}
-
-export const enemy = ({ x, y }: EnemyProps) => {
+export const enemy = ({ x, y }: Point) => {
     game.context.beginPath();
     game.context.arc(x, y, ENEMY_RADIUS, 0, 2 * Math.PI, false);
     game.context.fillStyle = ENEMY_COLOR;
     game.context.fill();
 };
 
-export const enemyDead = ({ x, y }: EnemyProps) => {
+export const enemyDead = ({ x, y }: Point) => {
     game.context.beginPath();
     game.context.arc(x, y, ENEMY_RADIUS, 0, 2 * Math.PI, false);
     game.context.arc(x, y, DEAD_ENEMY_RADIUS, 0, 2 * Math.PI, true);
@@ -33,7 +28,7 @@ export const enemyDead = ({ x, y }: EnemyProps) => {
     game.context.fill();
 };
 
-export const enemyWorker = ({ x, y }: EnemyProps) => ({
+export const enemyWorker = ({ x, y }: Point) => ({
     ...getEmptyWorker(),
     type: ENEMY_WORKER_TYPE,
     deadAnimationTime: 100,
@@ -53,7 +48,14 @@ export const enemyWorker = ({ x, y }: EnemyProps) => ({
             return enemyDead(cameraMapping(this.position));
         }
 
-        const rotation = getRotationRelatedToPlayer(this.position as Point);
+        const directRotation = getRotationRelatedToPlayer(
+            this.position as Point,
+        );
+        const randomRotation = {
+            cos: 2 * (Math.random() - 0.5),
+            sin: 2 * (Math.random() - 0.5),
+        };
+        const rotation = Math.random() > 0.5 ? directRotation : randomRotation;
 
         this.position.x += -rotation.cos * deltaMilliseconds * ENEMY_SPEED;
         this.position.y += -rotation.sin * deltaMilliseconds * ENEMY_SPEED;
@@ -65,33 +67,6 @@ export const enemyWorker = ({ x, y }: EnemyProps) => ({
     },
 });
 
-const clipCenter = (position: Point, offset: number): Point => {
-    if (
-        isCollision(
-            { ...position, radius: 0 },
-            { ...gameMap.center, radius: offset },
-        )
-    ) {
-        return {
-            x: position.x + Math.sign(position.x - gameMap.center.x) * offset,
-            y: position.y + Math.sign(position.y - gameMap.center.y) * offset,
-        };
-    }
-
-    return position;
-};
-
-export const spawnEnemy = () => {
-    const spawnCoordinates = clipCenter(
-        clipMap(
-            {
-                x: Math.random() * game.canvas.width,
-                y: Math.random() * game.canvas.height,
-            },
-            DEAD_ENEMY_RADIUS,
-        ),
-        MIN_SPAWN_RADIUS,
-    );
-
-    workManager.add(enemyWorker(spawnCoordinates));
+export const spawnEnemy = (spawnCoordinates: Point) => {
+    workManager.add(enemyWorker(clipMap(spawnCoordinates, ENEMY_RADIUS)));
 };
