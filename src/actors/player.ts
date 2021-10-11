@@ -1,5 +1,10 @@
 import { game, Point, Rotation } from '../core/game';
-import { getEmptyWorker, workManager } from '../core/worker';
+import {
+    getEmptyWorker,
+    PlayerWorker,
+    processDead,
+    workManager,
+} from '../core/worker';
 import {
     camera,
     CAMERA_SPEED,
@@ -8,6 +13,7 @@ import {
     MAP_HEIGHT,
     MAP_WIDTH,
 } from '../core/camera';
+import { drawCircle, drawDonut } from '../utils/paint';
 import { PLAYER_WORKER_TYPE } from './types';
 
 export const PLAYER_RADIUS = 12;
@@ -25,30 +31,16 @@ export const player = ({
     position: { x, y },
     gunRotation: { sin, cos },
 }: PlayerProps) => {
-    game.context.beginPath();
-    game.context.arc(x, y, PLAYER_RADIUS, 0, 2 * Math.PI, false);
-    game.context.fillStyle = PLAYER_COLOR;
-    game.context.fill();
-
-    game.context.beginPath();
-    game.context.arc(
-        x + cos * PLAYER_RADIUS,
-        y + sin * PLAYER_RADIUS,
+    drawCircle({ x, y }, PLAYER_RADIUS, PLAYER_COLOR);
+    drawCircle(
+        { x: x + cos * PLAYER_RADIUS, y: y + sin * PLAYER_RADIUS },
         PLAYER_GUN_RADIUS,
-        0,
-        2 * Math.PI,
-        false,
+        PLAYER_GUN_COLOR,
     );
-    game.context.fillStyle = PLAYER_GUN_COLOR;
-    game.context.fill();
 };
 
-export const playerDead = ({ x, y }: Point) => {
-    game.context.beginPath();
-    game.context.arc(x, y, PLAYER_RADIUS, 0, 2 * Math.PI, false);
-    game.context.arc(x, y, DEAD_PLAYER_RADIUS, 0, 2 * Math.PI, true);
-    game.context.fillStyle = PLAYER_COLOR;
-    game.context.fill();
+export const playerDead = (position: Point) => {
+    drawDonut(position, PLAYER_RADIUS, DEAD_PLAYER_RADIUS, PLAYER_COLOR);
 };
 
 export const playerWorker = ({ x, y }: Point) => ({
@@ -61,9 +53,8 @@ export const playerWorker = ({ x, y }: Point) => ({
         radius: PLAYER_RADIUS,
     },
     render(deltaMilliseconds: number) {
+        processDead(this)(deltaMilliseconds);
         if (this.isDead) {
-            this.deadTime += deltaMilliseconds;
-
             return playerDead(cameraMapping(this.position));
         }
 
@@ -102,7 +93,7 @@ export const playerWorker = ({ x, y }: Point) => ({
     },
 });
 
-let playerInstance = playerWorker(gameMap.center);
+let playerInstance: PlayerWorker = playerWorker(gameMap.center);
 
 export const getPlayerInstance = () => playerInstance;
 

@@ -1,31 +1,24 @@
-import { game, Point } from '../core/game';
-import { getEmptyWorker, workManager } from '../core/worker';
+import { Point } from '../core/game';
+import { getEmptyWorker, processDead, workManager } from '../core/worker';
 import { cameraMapping } from '../core/camera';
 import { clipMap } from '../utils/helpers';
 import { getRotationRelatedToPlayer } from '../utils/playerHelpers';
+import { drawCircle, drawDonut } from '../utils/paint';
 import { ENEMY_WORKER_TYPE } from './types';
 
 export const ENEMY_RADIUS = 7;
 export const ENEMY_COLOR = '#dd3d3d';
 export const ENEMY_SPEED = 0.01;
 export const DEAD_ENEMY_RADIUS = 4;
-export const MIN_SPAWN_RADIUS = 300;
 export const ENEMY_REWARD = 100;
 export const ENEMY_ATTACK = 10;
 
-export const enemy = ({ x, y }: Point) => {
-    game.context.beginPath();
-    game.context.arc(x, y, ENEMY_RADIUS, 0, 2 * Math.PI, false);
-    game.context.fillStyle = ENEMY_COLOR;
-    game.context.fill();
+export const enemy = (position: Point) => {
+    drawCircle(position, ENEMY_RADIUS, ENEMY_COLOR);
 };
 
-export const enemyDead = ({ x, y }: Point) => {
-    game.context.beginPath();
-    game.context.arc(x, y, ENEMY_RADIUS, 0, 2 * Math.PI, false);
-    game.context.arc(x, y, DEAD_ENEMY_RADIUS, 0, 2 * Math.PI, true);
-    game.context.fillStyle = ENEMY_COLOR;
-    game.context.fill();
+export const enemyDead = (position: Point) => {
+    drawDonut(position, ENEMY_RADIUS, DEAD_ENEMY_RADIUS, ENEMY_COLOR);
 };
 
 export const enemyWorker = ({ x, y }: Point) => ({
@@ -42,9 +35,8 @@ export const enemyWorker = ({ x, y }: Point) => ({
         attack: ENEMY_ATTACK,
     },
     render(deltaMilliseconds: number) {
+        processDead(this)(deltaMilliseconds);
         if (this.isDead) {
-            this.deadTime += deltaMilliseconds;
-
             return enemyDead(cameraMapping(this.position));
         }
 

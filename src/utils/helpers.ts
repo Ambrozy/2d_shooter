@@ -18,3 +18,14 @@ export const clipMap = (position: Point, offset: number): Point => ({
     x: Math.max(offset, Math.min(gameMap.width - offset, position.x)),
     y: Math.max(offset, Math.min(gameMap.height - offset, position.y)),
 });
+
+export const randomPosition = (): Point => ({
+    x: Math.random() * gameMap.width,
+    y: Math.random() * gameMap.height,
+});
+
+export const randomItem = <T>(array: T[]) => {
+    const randomIndex = Math.floor(Math.random() * array.length);
+
+    return array[randomIndex];
+};

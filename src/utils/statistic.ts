@@ -11,12 +11,13 @@ export const updateScore = (deltaScore: number) => {
 };
 
 export const updateAmmo = (deltaAmmunition: number) => {
-    game.ammunition -= deltaAmmunition;
+    game.ammunition += deltaAmmunition;
     ammunitionElement.innerHTML = `Ammunition: ${game.ammunition}`;
 };
 
 export const updateHealth = (deltaHealth: number) => {
-    game.health -= deltaHealth;
+    game.health += deltaHealth;
+    game.health = Math.min(game.health, 100);
     (healthElement as HTMLElement).style.width = `${game.health}%`;
 };
 

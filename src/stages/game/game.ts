@@ -2,28 +2,36 @@ import {
     pressedKeys,
     addKeyboardListeners,
     removeKeyboardListeners,
-} from '../core/keyboard';
-import { game, INITIAL_AMMUNITION, MAX_HEALTH } from '../core/game';
-import { Worker, workManager } from '../core/worker';
-import { screenManager } from '../core/screen';
-import { camera, gameMap, inverseCameraMapping } from '../core/camera';
-import { getPlayerInstance, spawnPlayer } from '../actors/player';
-import { spawnBullet } from '../actors/bullet';
-import { spawnEnemySpawner } from '../actors/enemySpawner';
+} from '../../core/keyboard';
+import { game, INITIAL_AMMUNITION, MAX_HEALTH } from '../../core/game';
 import {
+    BonusWorker,
+    EnemyWorker,
+    Worker,
+    workManager,
+} from '../../core/worker';
+import { screenManager } from '../../core/screen';
+import { camera, inverseCameraMapping } from '../../core/camera';
+import { getPlayerInstance, spawnPlayer } from '../../actors/player';
+import { spawnBullet } from '../../actors/bullet';
+import { spawnEnemySpawner } from '../../actors/enemySpawner';
+import {
+    BONUS_WORKER_TYPE,
     BULLET_WORKER_TYPE,
     ENEMY_WORKER_TYPE,
     SPAWNER_WORKER_TYPE,
-} from '../actors/types';
+} from '../../actors/types';
 import {
     showStatistics,
     updateAmmo,
     updateHealth,
     updateScore,
-} from '../utils/statistic';
-import { getRotationRelatedToPlayer } from '../utils/playerHelpers';
-import { isCollision } from '../utils/helpers';
-import { DEAD_SCREEN, GAME_SCREEN, WIN_SCREEN } from './types';
+} from '../../utils/statistic';
+import { getRotationRelatedToPlayer } from '../../utils/playerHelpers';
+import { randomPosition } from '../../utils/helpers';
+import { DEAD_SCREEN, GAME_SCREEN, WIN_SCREEN } from '../types';
+import { processCollision } from './collision';
+import { spawnBonusSpawner } from '../../actors/bonuses/bonusSpawner';
 
 const onMouseMove = (e: MouseEvent) => {
     game.mousePosition = inverseCameraMapping({
@@ -35,7 +43,7 @@ const onMouseMove = (e: MouseEvent) => {
 const onMouseDown = () => {
     if (game.ammunition > 0) {
         spawnBullet();
-        updateAmmo(1);
+        updateAmmo(-1);
     }
 };
 
@@ -61,33 +69,19 @@ export const gameScreen = {
         const bullets = workManager.workers.filter(
             (worker: Worker) => worker.type === BULLET_WORKER_TYPE,
         );
+        const bonuses = workManager.workers.filter(
+            (worker: Worker) => worker.type === BONUS_WORKER_TYPE,
+        );
         const spawners = workManager.workers.filter(
             (worker: Worker) => worker.type === SPAWNER_WORKER_TYPE,
         );
 
-        enemies.forEach((enemy: Worker) => {
-            bullets.forEach((bullet: Worker) => {
-                if (
-                    !bullet.isDead &&
-                    !enemy.isDead &&
-                    isCollision(bullet.position, enemy.position)
-                ) {
-                    enemy.isDead = true;
-                    bullet.isDead = true;
-                    updateScore(enemy.params.reward as number);
-                }
-            });
-
-            if (
-                !enemy.isDead &&
-                isCollision(playerInstance.position, enemy.position)
-            ) {
-                if (game.health <= 0) {
-                    playerInstance.isDead = true;
-                }
-                updateHealth(enemy.params.attack as number);
-            }
-        });
+        processCollision(
+            playerInstance,
+            enemies as EnemyWorker[],
+            bullets,
+            bonuses as BonusWorker[],
+        );
 
         if (playerInstance.removeCondition()) {
             screenManager.changeScreen(DEAD_SCREEN);
@@ -96,10 +90,7 @@ export const gameScreen = {
             screenManager.changeScreen(WIN_SCREEN);
         }
 
-        workManager.workers.forEach((worker) => {
-            worker.render(deltaMilliseconds);
-        });
-        workManager.update();
+        workManager.render(deltaMilliseconds);
     },
     constructor() {
         game.canvas.addEventListener('mousemove', onMouseMove);
@@ -109,11 +100,9 @@ export const gameScreen = {
         camera.reset();
         workManager.reset();
         spawnPlayer();
+        spawnBonusSpawner();
         for (let i = 0; i < 100; i++) {
-            spawnEnemySpawner({
-                x: Math.random() * gameMap.width,
-                y: Math.random() * gameMap.height,
-            });
+            spawnEnemySpawner(randomPosition());
         }
 
         game.score = 0;

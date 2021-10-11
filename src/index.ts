@@ -2,7 +2,7 @@ import { game } from './core/game';
 import { screenManager } from './core/screen';
 import { WELCOME_SCREEN } from './stages/types';
 import { welcomeScreen } from './stages/welcome';
-import { gameScreen } from './stages/game';
+import { gameScreen } from './stages/game/game';
 import { deadScreen } from './stages/dead';
 import { winScreen } from './stages/win';
 import { printFPS } from './utils/fps';

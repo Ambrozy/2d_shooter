@@ -12,12 +12,39 @@ export interface Worker extends Record<string, unknown> {
     removeCondition: () => boolean;
 }
 
+export interface BonusWorker extends Worker {
+    params: {
+        expiredTime: number;
+    };
+    onBonus: () => void;
+}
+
+export interface PlayerWorker extends Worker {
+    moveRight: () => void;
+    moveLeft: () => void;
+    moveUp: () => void;
+    moveDown: () => void;
+}
+
+export interface EnemyWorker extends Worker {
+    params: {
+        reward: number;
+        attack: number;
+    };
+}
+
 export interface WorkersManager {
     workers: readonly Worker[];
     reset: () => void;
-    update: () => void;
     add: (worker: Worker) => void;
+    render: (deltaMilliseconds: number) => void;
 }
+
+export const processDead = (worker: Worker) => (deltaMilliseconds: number) => {
+    if (worker.isDead) {
+        worker.deadTime += deltaMilliseconds;
+    }
+};
 
 export const getEmptyWorker = (): Worker => ({
     type: EMPTY_WORKER_TYPE,
@@ -27,9 +54,7 @@ export const getEmptyWorker = (): Worker => ({
     position: { x: 0, y: 0, radius: 0 },
     params: {},
     render(deltaMilliseconds) {
-        if (this.isDead) {
-            this.deadTime += deltaMilliseconds;
-        }
+        processDead(this)(deltaMilliseconds);
     },
     removeCondition() {
         return this.isDead && this.deadTime >= this.deadAnimationTime;
@@ -41,12 +66,16 @@ export const workManager: WorkersManager = {
     reset() {
         this.workers = [];
     },
-    update() {
+    add(worker: Worker) {
+        this.workers.push(worker);
+    },
+    render(deltaMilliseconds: number) {
+        this.workers.forEach((worker: Worker) => {
+            worker.render(deltaMilliseconds);
+        });
+
         this.workers = this.workers.filter(
             (worker: Worker) => !worker.removeCondition(),
         );
-    },
-    add(worker: Worker) {
-        this.workers.push(worker);
     },
 };

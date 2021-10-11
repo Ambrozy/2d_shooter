@@ -4,6 +4,7 @@ import { isOutOfMap } from '../utils/helpers';
 import { getEmptyWorker, workManager } from '../core/worker';
 import { BULLET_WORKER_TYPE } from './types';
 import { cameraMapping } from '../core/camera';
+import { drawLine } from '../utils/paint';
 
 const BULLET_LEN = 2;
 const BULLET_WIDTH = 1;
@@ -19,12 +20,12 @@ export const bullet = ({
     position: { x, y },
     rotation: { cos, sin },
 }: BulletProps) => {
-    game.context.beginPath();
-    game.context.moveTo(x, y);
-    game.context.lineTo(x + cos * BULLET_LEN, y + sin * BULLET_LEN);
-    game.context.lineWidth = BULLET_WIDTH;
-    game.context.strokeStyle = BULLET_COLOR;
-    game.context.stroke();
+    drawLine(
+        { x, y },
+        { x: x + cos * BULLET_LEN, y: y + sin * BULLET_LEN },
+        BULLET_WIDTH,
+        BULLET_COLOR,
+    );
 };
 
 export const bulletWorker = ({ sin, cos }: Rotation) => ({
