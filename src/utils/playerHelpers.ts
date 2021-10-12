@@ -1,4 +1,4 @@
-import { Point, Rotation } from '../core/game';
+import { Point, Rotation } from '../core/types';
 import { getPlayerInstance } from '../actors/player';
 
 export const getRotationRelatedToPlayer = (position: Point): Rotation => {

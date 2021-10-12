@@ -1,10 +1,4 @@
 import {
-    pressedKeys,
-    addKeyboardListeners,
-    removeKeyboardListeners,
-} from '../../core/keyboard';
-import { game, INITIAL_AMMUNITION, MAX_HEALTH } from '../../core/game';
-import {
     BonusWorker,
     EnemyWorker,
     Worker,
@@ -12,38 +6,39 @@ import {
 } from '../../core/worker';
 import { screenManager } from '../../core/screen';
 import { camera, inverseCameraMapping } from '../../core/camera';
+import {
+    addKeyListeners,
+    controls,
+    removeKeyListeners,
+} from '../../core/controls';
+import { game, INITIAL_AMMUNITION, MAX_HEALTH } from '../../core/game';
 import { getPlayerInstance, spawnPlayer } from '../../actors/player';
 import { spawnBullet } from '../../actors/bullet';
 import { spawnEnemySpawner } from '../../actors/enemySpawner';
+import { spawnBonusSpawner } from '../../actors/bonuses/bonusSpawner';
 import {
     BONUS_WORKER_TYPE,
     BULLET_WORKER_TYPE,
     ENEMY_WORKER_TYPE,
     SPAWNER_WORKER_TYPE,
 } from '../../actors/types';
-import {
-    showStatistics,
-    updateAmmo,
-    updateHealth,
-    updateScore,
-} from '../../utils/statistic';
 import { getRotationRelatedToPlayer } from '../../utils/playerHelpers';
-import { randomPosition } from '../../utils/helpers';
+import { randomEdgePosition } from '../../utils/helpers';
 import { DEAD_SCREEN, GAME_SCREEN, WIN_SCREEN } from '../types';
 import { processCollision } from './collision';
-import { spawnBonusSpawner } from '../../actors/bonuses/bonusSpawner';
+import { context } from '../../core/context';
 
 const onMouseMove = (e: MouseEvent) => {
-    game.mousePosition = inverseCameraMapping({
+    controls.mousePosition = inverseCameraMapping({
         x: e.offsetX,
         y: e.offsetY,
     });
-    game.mouseRotation = getRotationRelatedToPlayer(game.mousePosition);
+    controls.mouseRotation = getRotationRelatedToPlayer(controls.mousePosition);
 };
 const onMouseDown = () => {
     if (game.ammunition > 0) {
         spawnBullet();
-        updateAmmo(-1);
+        game.updateAmmo(-1);
     }
 };
 
@@ -52,14 +47,14 @@ export const gameScreen = {
     render(deltaMilliseconds: number) {
         const playerInstance = getPlayerInstance();
 
-        if (pressedKeys.has('ArrowRight')) {
+        if (controls.pressedKeys.has('ArrowRight')) {
             playerInstance.moveRight();
-        } else if (pressedKeys.has('ArrowLeft')) {
+        } else if (controls.pressedKeys.has('ArrowLeft')) {
             playerInstance.moveLeft();
         }
-        if (pressedKeys.has('ArrowUp')) {
+        if (controls.pressedKeys.has('ArrowUp')) {
             playerInstance.moveUp();
-        } else if (pressedKeys.has('ArrowDown')) {
+        } else if (controls.pressedKeys.has('ArrowDown')) {
             playerInstance.moveDown();
         }
 
@@ -90,32 +85,31 @@ export const gameScreen = {
             screenManager.changeScreen(WIN_SCREEN);
         }
 
+        game.temporaryBonusManager.render(deltaMilliseconds);
         workManager.render(deltaMilliseconds);
     },
     constructor() {
-        game.canvas.addEventListener('mousemove', onMouseMove);
-        game.canvas.addEventListener('mousedown', onMouseDown);
-        addKeyboardListeners();
+        context.canvas.addEventListener('mousemove', onMouseMove);
+        context.canvas.addEventListener('mousedown', onMouseDown);
+        addKeyListeners();
 
         camera.reset();
         workManager.reset();
         spawnPlayer();
         spawnBonusSpawner();
         for (let i = 0; i < 100; i++) {
-            spawnEnemySpawner(randomPosition());
+            spawnEnemySpawner(randomEdgePosition());
         }
 
-        game.score = 0;
-        game.ammunition = INITIAL_AMMUNITION;
-        game.health = MAX_HEALTH;
-        updateScore(0);
-        updateAmmo(0);
-        updateHealth(0);
-        showStatistics();
+        game.initStatistics({
+            score: 0,
+            health: INITIAL_AMMUNITION,
+            ammunition: MAX_HEALTH,
+        });
     },
     destructor() {
-        game.canvas.removeEventListener('mousemove', onMouseMove);
-        game.canvas.removeEventListener('mousedown', onMouseDown);
-        removeKeyboardListeners();
+        context.canvas.removeEventListener('mousemove', onMouseMove);
+        context.canvas.removeEventListener('mousedown', onMouseDown);
+        removeKeyListeners();
     },
 };

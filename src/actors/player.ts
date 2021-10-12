@@ -1,4 +1,4 @@
-import { game, Point, Rotation } from '../core/game';
+import { Point, Rotation } from '../core/types';
 import {
     getEmptyWorker,
     PlayerWorker,
@@ -7,14 +7,16 @@ import {
 } from '../core/worker';
 import {
     camera,
-    CAMERA_SPEED,
     cameraMapping,
     gameMap,
     MAP_HEIGHT,
     MAP_WIDTH,
 } from '../core/camera';
+import { context } from '../core/context';
+import { controls } from '../core/controls';
 import { drawCircle, drawDonut } from '../utils/paint';
 import { PLAYER_WORKER_TYPE } from './types';
+import { game } from '../core/game';
 
 export const PLAYER_RADIUS = 12;
 export const PLAYER_COLOR = '#91e1ff';
@@ -60,35 +62,35 @@ export const playerWorker = ({ x, y }: Point) => ({
 
         player({
             position: cameraMapping(this.position),
-            gunRotation: game.mouseRotation,
+            gunRotation: controls.mouseRotation,
         });
     },
     moveRight() {
-        if (this.position.x >= game.canvas.width / 2) {
+        if (this.position.x >= context.canvas.width / 2) {
             camera.moveRight();
         }
-        this.position.x += CAMERA_SPEED;
+        this.position.x += game.getPlayerSpeed();
         this.position.x = Math.min(MAP_WIDTH - PLAYER_RADIUS, this.position.x);
     },
     moveLeft() {
-        if (this.position.x <= MAP_WIDTH - game.canvas.width / 2) {
+        if (this.position.x <= MAP_WIDTH - context.canvas.width / 2) {
             camera.moveLeft();
         }
-        this.position.x -= CAMERA_SPEED;
+        this.position.x -= game.getPlayerSpeed();
         this.position.x = Math.max(PLAYER_RADIUS, this.position.x);
     },
     moveUp() {
-        if (this.position.y <= MAP_HEIGHT - game.canvas.width / 2) {
+        if (this.position.y <= MAP_HEIGHT - context.canvas.width / 2) {
             camera.moveUp();
         }
-        this.position.y -= CAMERA_SPEED;
+        this.position.y -= game.getPlayerSpeed();
         this.position.y = Math.max(PLAYER_RADIUS, this.position.y);
     },
     moveDown() {
-        if (this.position.y >= game.canvas.width / 2) {
+        if (this.position.y >= context.canvas.width / 2) {
             camera.moveDown();
         }
-        this.position.y += CAMERA_SPEED;
+        this.position.y += game.getPlayerSpeed();
         this.position.y = Math.min(MAP_HEIGHT - PLAYER_RADIUS, this.position.y);
     },
 });

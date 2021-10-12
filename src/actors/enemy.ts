@@ -1,6 +1,8 @@
-import { Point } from '../core/game';
+import { Point } from '../core/types';
 import { getEmptyWorker, processDead, workManager } from '../core/worker';
 import { cameraMapping } from '../core/camera';
+import { FREEZE_BONUS } from '../core/bonusManager';
+import { game } from '../core/game';
 import { clipMap } from '../utils/helpers';
 import { getRotationRelatedToPlayer } from '../utils/playerHelpers';
 import { drawCircle, drawDonut } from '../utils/paint';
@@ -8,7 +10,7 @@ import { ENEMY_WORKER_TYPE } from './types';
 
 export const ENEMY_RADIUS = 7;
 export const ENEMY_COLOR = '#dd3d3d';
-export const ENEMY_SPEED = 0.01;
+export const ENEMY_SPEED = 0.02;
 export const DEAD_ENEMY_RADIUS = 4;
 export const ENEMY_REWARD = 100;
 export const ENEMY_ATTACK = 10;
@@ -40,21 +42,25 @@ export const enemyWorker = ({ x, y }: Point) => ({
             return enemyDead(cameraMapping(this.position));
         }
 
-        const directRotation = getRotationRelatedToPlayer(
-            this.position as Point,
-        );
-        const randomRotation = {
-            cos: 2 * (Math.random() - 0.5),
-            sin: 2 * (Math.random() - 0.5),
-        };
-        const rotation = Math.random() > 0.5 ? directRotation : randomRotation;
+        if (!game.getBonusValue(FREEZE_BONUS)) {
+            const directRotation = getRotationRelatedToPlayer(
+                this.position as Point,
+            );
+            const randomRotation = {
+                cos: 2 * (Math.random() - 0.5),
+                sin: 2 * (Math.random() - 0.5),
+            };
+            const rotation =
+                Math.random() > 0.5 ? directRotation : randomRotation;
 
-        this.position.x += -rotation.cos * deltaMilliseconds * ENEMY_SPEED;
-        this.position.y += -rotation.sin * deltaMilliseconds * ENEMY_SPEED;
-        ({ x: this.position.x, y: this.position.y } = clipMap(
-            this.position,
-            DEAD_ENEMY_RADIUS,
-        ));
+            this.position.x += -rotation.cos * deltaMilliseconds * ENEMY_SPEED;
+            this.position.y += -rotation.sin * deltaMilliseconds * ENEMY_SPEED;
+            ({ x: this.position.x, y: this.position.y } = clipMap(
+                this.position,
+                DEAD_ENEMY_RADIUS,
+            ));
+        }
+
         enemy(cameraMapping(this.position));
     },
 });

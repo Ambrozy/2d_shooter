@@ -1,4 +1,4 @@
-import { Circle, Point } from '../core/game';
+import { Circle, Point } from '../core/types';
 import { gameMap } from '../core/camera';
 
 export const isCollision = (circle1: Circle, circle2: Circle) =>
@@ -28,4 +28,15 @@ export const randomItem = <T>(array: T[]) => {
     const randomIndex = Math.floor(Math.random() * array.length);
 
     return array[randomIndex];
+};
+
+export const randomEdgePosition = (): Point => {
+    const position = randomPosition();
+
+    return randomItem([
+        { x: 0, y: position.y },
+        { x: gameMap.width, y: position.y },
+        { x: position.x, y: 0 },
+        { x: position.x, y: gameMap.height },
+    ]);
 };

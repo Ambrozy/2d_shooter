@@ -1,8 +1,9 @@
-import { game, Point } from './game';
+import { Point } from './types';
+import { context } from './context';
+import { game } from './game';
 
 export const MAP_WIDTH = 1600;
 export const MAP_HEIGHT = 1200;
-export const CAMERA_SPEED = 2.5;
 
 export interface Camera {
     readonly x: number;
@@ -34,29 +35,29 @@ export const camera: Camera = {
         this.y = gameMap.center.y;
     },
     moveRight() {
-        this.x += CAMERA_SPEED;
-        this.x = Math.min(MAP_WIDTH - game.canvas.width / 2, this.x);
+        this.x += game.getPlayerSpeed();
+        this.x = Math.min(MAP_WIDTH - context.canvas.width / 2, this.x);
     },
     moveLeft() {
-        this.x -= CAMERA_SPEED;
-        this.x = Math.max(game.canvas.width / 2, this.x);
+        this.x -= game.getPlayerSpeed();
+        this.x = Math.max(context.canvas.width / 2, this.x);
     },
     moveUp() {
-        this.y -= CAMERA_SPEED;
-        this.y = Math.max(game.canvas.height / 2, this.y);
+        this.y -= game.getPlayerSpeed();
+        this.y = Math.max(context.canvas.height / 2, this.y);
     },
     moveDown() {
-        this.y += CAMERA_SPEED;
-        this.y = Math.min(MAP_HEIGHT - game.canvas.height / 2, this.y);
+        this.y += game.getPlayerSpeed();
+        this.y = Math.min(MAP_HEIGHT - context.canvas.height / 2, this.y);
     },
 };
 
 export const cameraMapping = (position: Point): Point => ({
-    x: position.x - (camera.x - game.canvas.width / 2),
-    y: position.y - (camera.y - game.canvas.height / 2),
+    x: position.x - (camera.x - context.canvas.width / 2),
+    y: position.y - (camera.y - context.canvas.height / 2),
 });
 
 export const inverseCameraMapping = (position: Point): Point => ({
-    x: position.x + (camera.x - game.canvas.width / 2),
-    y: position.y + (camera.y - game.canvas.height / 2),
+    x: position.x + (camera.x - context.canvas.width / 2),
+    y: position.y + (camera.y - context.canvas.height / 2),
 });

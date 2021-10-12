@@ -1,5 +1,5 @@
 import { EMPTY_WORKER_TYPE } from '../actors/types';
-import { Circle } from './game';
+import { Circle } from './types';
 
 export interface Worker extends Record<string, unknown> {
     type: string;

@@ -4,9 +4,8 @@ import {
     PlayerWorker,
     Worker,
 } from '../../core/worker';
-import { isCollision } from '../../utils/helpers';
-import { updateHealth, updateScore } from '../../utils/statistic';
 import { game } from '../../core/game';
+import { isCollision } from '../../utils/helpers';
 
 export const processCollision = (
     player: PlayerWorker,
@@ -19,7 +18,7 @@ export const processCollision = (
             if (!enemy.isDead && isCollision(bullet.position, enemy.position)) {
                 enemy.isDead = true;
                 bullet.isDead = true;
-                updateScore(enemy.params.reward);
+                game.updateScore(enemy.params.reward);
             }
         });
 
@@ -27,7 +26,7 @@ export const processCollision = (
             if (game.health <= 0) {
                 player.isDead = true;
             }
-            updateHealth(-enemy.params.attack);
+            game.updateHealth(-enemy.params.attack);
         }
     });
 

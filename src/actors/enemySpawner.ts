@@ -1,5 +1,7 @@
-import { Point } from '../core/game';
+import { Point } from '../core/types';
 import { getEmptyWorker, workManager } from '../core/worker';
+import { game } from '../core/game';
+import { FREEZE_BONUS } from '../core/bonusManager';
 import { SPAWNER_WORKER_TYPE } from './types';
 import { enemyWorker } from './enemy';
 
@@ -17,7 +19,9 @@ export const enemySpawnerWorker = ({ x, y }: Point) => ({
         enemyCapacity: 10,
     },
     render(deltaMilliseconds: number) {
-        this.params.elapsedTime += deltaMilliseconds;
+        if (!game.getBonusValue(FREEZE_BONUS)) {
+            this.params.elapsedTime += deltaMilliseconds;
+        }
 
         if (this.params.enemyCapacity <= 0) {
             this.isDead = true;

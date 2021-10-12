@@ -1,13 +1,7 @@
-import { Point } from '../../core/game';
-import { cameraMapping } from '../../core/camera';
+import { Point } from '../../core/types';
+import { game } from '../../core/game';
 import { drawCircle, drawLine } from '../../utils/paint';
-import {
-    BONUS_COLOR,
-    BONUS_RADIUS,
-    getBonusWorker,
-    processExpired,
-} from './constants';
-import { updateAmmo } from '../../utils/statistic';
+import { BONUS_COLOR, BONUS_RADIUS, getBonusWorker } from './constants';
 
 const BONUS_LINE_HEIGHT = 7;
 const BONUS_LINE_WIDTH = 1;
@@ -25,12 +19,8 @@ export const ammunitionBonus = (position: Point) => {
 };
 
 export const ammunitionBonusWorker = (position: Point) => ({
-    ...getBonusWorker(position),
-    render(deltaMilliseconds: number) {
-        processExpired(this)(deltaMilliseconds);
-        ammunitionBonus(cameraMapping(this.position));
-    },
+    ...getBonusWorker(position, ammunitionBonus),
     onBonus() {
-        updateAmmo(AMMO_BONUS);
+        game.updateAmmo(AMMO_BONUS);
     },
 });

@@ -1,13 +1,7 @@
-import { Point } from '../../core/game';
-import { cameraMapping } from '../../core/camera';
+import { Point } from '../../core/types';
+import { game } from '../../core/game';
 import { drawCircle, drawTriangle } from '../../utils/paint';
-import {
-    BONUS_COLOR,
-    BONUS_RADIUS,
-    getBonusWorker,
-    processExpired,
-} from './constants';
-import { updateHealth } from '../../utils/statistic';
+import { BONUS_COLOR, BONUS_RADIUS, getBonusWorker } from './constants';
 
 const HEALTH_RADIUS = 6;
 const HEALTH_COLOR = '#f87676';
@@ -34,12 +28,8 @@ export const healthBonus = (position: Point) => {
 };
 
 export const healthBonusWorker = (position: Point) => ({
-    ...getBonusWorker(position),
-    render(deltaMilliseconds: number) {
-        processExpired(this)(deltaMilliseconds);
-        healthBonus(cameraMapping(this.position));
-    },
+    ...getBonusWorker(position, healthBonus),
     onBonus() {
-        updateHealth(HEALTH_BONUS);
+        game.updateHealth(HEALTH_BONUS);
     },
 });

@@ -1,20 +1,15 @@
-import { Point } from '../../core/game';
-import { getEmptyWorker, processDead, workManager } from '../../core/worker';
 import { BULLET_WORKER_TYPE } from '../types';
 import { cameraMapping } from '../../core/camera';
+import { Point } from '../../core/types';
+import { getEmptyWorker, processDead, workManager } from '../../core/worker';
 import { drawCircle } from '../../utils/paint';
-import {
-    BONUS_COLOR,
-    BONUS_RADIUS,
-    getBonusWorker,
-    processExpired,
-} from './constants';
+import { BONUS_COLOR, BONUS_RADIUS, getBonusWorker } from './constants';
 
 const BOMB_IMAGE_RADIUS = 2;
 const BOMB_IMAGE_COLOR = '#ecd857';
 const BOMB_IMAGE_OFFSET = 3;
 const EXPLOSION_RADIUS = 100;
-const EXPLOSION_COLOR = 'rgba(255,242,121,0.8)';
+const EXPLOSION_COLOR = '#625d2a';
 
 const sqrt2 = Math.sqrt(2);
 
@@ -50,17 +45,13 @@ export const explosionWorker = ({ x, y }: Point) => ({
     isDead: true,
     position: { x, y, radius: EXPLOSION_RADIUS },
     render(deltaMilliseconds: number) {
-        processExpired(this)(deltaMilliseconds);
         processDead(this)(deltaMilliseconds);
         explosion(cameraMapping(this.position));
     },
 });
 
 export const bombBonusWorker = (position: Point) => ({
-    ...getBonusWorker(position),
-    render() {
-        bombBonus(cameraMapping(this.position));
-    },
+    ...getBonusWorker(position, bombBonus),
     onBonus() {
         workManager.add(explosionWorker(this.position));
     },

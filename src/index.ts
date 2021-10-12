@@ -1,4 +1,4 @@
-import { game } from './core/game';
+import { context } from './core/context';
 import { screenManager } from './core/screen';
 import { WELCOME_SCREEN } from './stages/types';
 import { welcomeScreen } from './stages/welcome';
@@ -12,8 +12,8 @@ import './index.scss';
 let lastRender = 0;
 
 const clearScreen = () => {
-    game.context.fillStyle = '#000';
-    game.context.fillRect(0, 0, game.canvas.width, game.canvas.height);
+    context.context.fillStyle = '#000';
+    context.context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 };
 
 const loop = (timestamp: number) => {

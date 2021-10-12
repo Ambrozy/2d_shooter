@@ -3,8 +3,20 @@ import { randomItem, randomPosition } from '../../utils/helpers';
 import { ammunitionBonusWorker } from './ammunitionBonus';
 import { bombBonusWorker } from './bombBonus';
 import { healthBonusWorker } from './healthBonus';
+import { speedBonusWorker } from './speedBonus';
+import { expBonusWorker } from './expBonus';
+import { untouchableBonusWorker } from './untouchableBonus';
+import { freezeBonusWorker } from './freezeBonus';
 
-const bonuses = [ammunitionBonusWorker, bombBonusWorker, healthBonusWorker];
+const bonuses = [
+    ammunitionBonusWorker,
+    bombBonusWorker,
+    healthBonusWorker,
+    speedBonusWorker,
+    expBonusWorker,
+    untouchableBonusWorker,
+    freezeBonusWorker,
+];
 
 export const bonusSpawner = () => ({
     ...getEmptyWorker(),

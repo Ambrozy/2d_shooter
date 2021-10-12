@@ -1,10 +1,11 @@
-import { game, Point } from '../core/game';
+import { Point } from '../core/types';
+import { context } from '../core/context';
 
 export const drawCircle = (position: Point, radius: number, color: string) => {
-    game.context.beginPath();
-    game.context.arc(position.x, position.y, radius, 0, 2 * Math.PI, false);
-    game.context.fillStyle = color;
-    game.context.fill();
+    context.context.beginPath();
+    context.context.arc(position.x, position.y, radius, 0, 2 * Math.PI, false);
+    context.context.fillStyle = color;
+    context.context.fill();
 };
 
 export const drawDonut = (
@@ -13,11 +14,18 @@ export const drawDonut = (
     innerRadius: number,
     color: string,
 ) => {
-    game.context.beginPath();
-    game.context.arc(position.x, position.y, radius, 0, 2 * Math.PI, false);
-    game.context.arc(position.x, position.y, innerRadius, 0, 2 * Math.PI, true);
-    game.context.fillStyle = color;
-    game.context.fill();
+    context.context.beginPath();
+    context.context.arc(position.x, position.y, radius, 0, 2 * Math.PI, false);
+    context.context.arc(
+        position.x,
+        position.y,
+        innerRadius,
+        0,
+        2 * Math.PI,
+        true,
+    );
+    context.context.fillStyle = color;
+    context.context.fill();
 };
 
 export const drawLine = (
@@ -26,12 +34,12 @@ export const drawLine = (
     width: number,
     color: string,
 ) => {
-    game.context.beginPath();
-    game.context.moveTo(from.x, from.y);
-    game.context.lineTo(to.x, to.y);
-    game.context.lineWidth = width;
-    game.context.strokeStyle = color;
-    game.context.stroke();
+    context.context.beginPath();
+    context.context.moveTo(from.x, from.y);
+    context.context.lineTo(to.x, to.y);
+    context.context.lineWidth = width;
+    context.context.strokeStyle = color;
+    context.context.stroke();
 };
 
 export const drawTriangle = (
@@ -40,11 +48,23 @@ export const drawTriangle = (
     pt3: Point,
     color: string,
 ) => {
-    game.context.beginPath();
-    game.context.moveTo(pt1.x, pt1.y);
-    game.context.lineTo(pt2.x, pt2.y);
-    game.context.lineTo(pt3.x, pt3.y);
-    game.context.lineTo(pt1.x, pt1.y);
-    game.context.fillStyle = color;
-    game.context.fill();
+    context.context.beginPath();
+    context.context.moveTo(pt1.x, pt1.y);
+    context.context.lineTo(pt2.x, pt2.y);
+    context.context.lineTo(pt3.x, pt3.y);
+    context.context.lineTo(pt1.x, pt1.y);
+    context.context.fillStyle = color;
+    context.context.fill();
+};
+
+export const drawText = (
+    text: string,
+    position: Point,
+    fontSize: number,
+    color: string,
+) => {
+    context.context.font = `${fontSize}px Arial`;
+    context.context.textAlign = 'center';
+    context.context.fillStyle = color;
+    context.context.fillText(text, position.x, position.y + fontSize / 4);
 };
