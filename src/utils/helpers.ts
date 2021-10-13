@@ -1,12 +1,14 @@
 import { Circle, Point } from '../core/types';
 import { gameMap } from '../core/camera';
 
-export const isCollision = (circle1: Circle, circle2: Circle) =>
+export const getDistance = (position1: Point, position2: Point) =>
     Math.sqrt(
-        (circle1.x - circle2.x) * (circle1.x - circle2.x) +
-            (circle1.y - circle2.y) * (circle1.y - circle2.y),
-    ) <
-    circle1.radius + circle2.radius;
+        (position1.x - position2.x) * (position1.x - position2.x) +
+            (position1.y - position2.y) * (position1.y - position2.y),
+    );
+
+export const isCollision = (circle1: Circle, circle2: Circle) =>
+    getDistance(circle1, circle2) < circle1.radius + circle2.radius;
 
 export const isOutOfMap = (position: Point) =>
     position.x < 0 ||

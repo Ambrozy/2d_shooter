@@ -1,5 +1,5 @@
 import { EMPTY_WORKER_TYPE } from '../actors/types';
-import { Circle } from './types';
+import { Circle, Point } from './types';
 
 export interface Worker extends Record<string, unknown> {
     type: string;
@@ -28,10 +28,21 @@ export interface PlayerWorker extends Worker {
 
 export interface EnemyWorker extends Worker {
     params: {
+        health: number;
         reward: number;
         attack: number;
     };
+    __getNextPosition: (position: Point, deltaMilliseconds: number) => Point;
+    onDead: () => void;
 }
+
+export interface BulletWorker extends Worker {
+    params: {
+        attack: number;
+    } & Worker['params'];
+}
+
+export type WorkerBuilder<T extends Worker> = (position: Point) => T;
 
 export interface WorkersManager {
     workers: readonly Worker[];

@@ -1,5 +1,6 @@
 import {
     BonusWorker,
+    BulletWorker,
     EnemyWorker,
     Worker,
     workManager,
@@ -14,7 +15,7 @@ import {
 import { game, INITIAL_AMMUNITION, MAX_HEALTH } from '../../core/game';
 import { getPlayerInstance, spawnPlayer } from '../../actors/player';
 import { spawnBullet } from '../../actors/bullet';
-import { spawnEnemySpawner } from '../../actors/enemySpawner';
+import { spawnEnemySpawner } from '../../actors/enemies/enemySpawner';
 import { spawnBonusSpawner } from '../../actors/bonuses/bonusSpawner';
 import {
     BONUS_WORKER_TYPE,
@@ -74,7 +75,7 @@ export const gameScreen = {
         processCollision(
             playerInstance,
             enemies as EnemyWorker[],
-            bullets,
+            bullets as BulletWorker[],
             bonuses as BonusWorker[],
         );
 

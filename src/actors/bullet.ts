@@ -1,5 +1,5 @@
 import { Point, Rotation } from '../core/types';
-import { getEmptyWorker, workManager } from '../core/worker';
+import { BulletWorker, getEmptyWorker, workManager } from '../core/worker';
 import { cameraMapping } from '../core/camera';
 import { controls } from '../core/controls';
 import { isOutOfMap } from '../utils/helpers';
@@ -7,6 +7,7 @@ import { drawLine } from '../utils/paint';
 import { getPlayerInstance, PLAYER_RADIUS } from './player';
 import { BULLET_WORKER_TYPE } from './types';
 
+const BULLET_ATTACK = 10;
 const BULLET_LEN = 2;
 const BULLET_WIDTH = 1;
 const BULLET_COLOR = '#fff';
@@ -29,7 +30,7 @@ export const bullet = ({
     );
 };
 
-export const bulletWorker = ({ sin, cos }: Rotation) => ({
+export const bulletWorker = ({ sin, cos }: Rotation): BulletWorker => ({
     ...getEmptyWorker(),
     type: BULLET_WORKER_TYPE,
     position: {
@@ -38,6 +39,7 @@ export const bulletWorker = ({ sin, cos }: Rotation) => ({
         radius: BULLET_LEN,
     },
     params: {
+        attack: BULLET_ATTACK,
         sin,
         cos,
     },
