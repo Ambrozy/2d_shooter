@@ -10,6 +10,7 @@ const BOMB_IMAGE_COLOR = '#ecd857';
 const BOMB_IMAGE_OFFSET = 3;
 const EXPLOSION_RADIUS = 100;
 const EXPLOSION_COLOR = '#625d2a';
+const BOMB_ATTACK = 1000;
 
 const sqrt2 = Math.sqrt(2);
 
@@ -44,6 +45,7 @@ export const explosionWorker = ({ x, y }: Point) => ({
     deadAnimationTime: 100,
     isDead: true,
     position: { x, y, radius: EXPLOSION_RADIUS },
+    params: { attack: BOMB_ATTACK },
     render(deltaMilliseconds: number) {
         processDead(this)(deltaMilliseconds);
         explosion(cameraMapping(this.position));
