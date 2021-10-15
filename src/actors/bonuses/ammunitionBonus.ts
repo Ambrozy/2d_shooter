@@ -1,12 +1,17 @@
 import { Point } from '../../core/types';
 import { game } from '../../core/game';
+import { playerGun } from '../bullets/playerGun';
 import { drawCircle, drawLine } from '../../utils/paint';
-import { BONUS_COLOR, BONUS_RADIUS, getBonusWorker } from './constants';
+import {
+    ammoBonusMap,
+    BONUS_COLOR,
+    BONUS_RADIUS,
+    getBonusWorker,
+} from './constants';
 
 const BONUS_LINE_HEIGHT = 7;
 const BONUS_LINE_WIDTH = 1;
 const BONUS_LINE_COLOR = '#000f2c';
-const AMMO_BONUS = 100;
 
 export const ammunitionBonus = (position: Point) => {
     drawCircle(position, BONUS_RADIUS, BONUS_COLOR);
@@ -21,6 +26,6 @@ export const ammunitionBonus = (position: Point) => {
 export const ammunitionBonusWorker = (position: Point) => ({
     ...getBonusWorker(position, ammunitionBonus),
     onBonus() {
-        game.updateAmmo(AMMO_BONUS);
+        game.updateAmmo(ammoBonusMap[playerGun.gunName]);
     },
 });

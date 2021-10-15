@@ -14,6 +14,7 @@ import { shootgunBulletBuilder } from './shootgun';
 export interface PlayerGun {
     readonly lastShotTime: number;
     readonly bulletBuilder: BulletBuilder;
+    readonly gunName: GunName;
     readonly setGun: (gunName: GunName) => void;
     readonly render: (deltaMilliseconds: number) => void;
     readonly shot: () => void;
@@ -27,9 +28,11 @@ const gunMap: Record<GunName, BulletBuilder> = {
 
 export const playerGun: PlayerGun = {
     lastShotTime: Infinity,
-    bulletBuilder: shootgunBulletBuilder,
+    bulletBuilder: pistolBulletBuilder,
+    gunName: GUN_PISTOL,
     setGun(gunName: GunName) {
         this.bulletBuilder = gunMap[gunName];
+        this.gunName = gunName;
     },
     render(deltaMilliseconds: number) {
         this.lastShotTime += deltaMilliseconds;

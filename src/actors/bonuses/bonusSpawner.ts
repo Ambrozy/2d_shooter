@@ -7,6 +7,8 @@ import { speedBonusWorker } from './speedBonus';
 import { expBonusWorker } from './expBonus';
 import { untouchableBonusWorker } from './untouchableBonus';
 import { freezeBonusWorker } from './freezeBonus';
+import { minigunBonusWorker } from './miniganBonus';
+import { shootgunBonusWorker } from './shootgunBonus';
 
 const bonuses = [
     ammunitionBonusWorker,
@@ -16,6 +18,8 @@ const bonuses = [
     expBonusWorker,
     untouchableBonusWorker,
     freezeBonusWorker,
+    minigunBonusWorker,
+    shootgunBonusWorker,
 ];
 
 export const bonusSpawner = () => ({

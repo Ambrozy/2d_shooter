@@ -1,11 +1,23 @@
 import { Point } from '../../core/types';
 import { cameraMapping } from '../../core/camera';
 import { BonusWorker, getEmptyWorker, processDead } from '../../core/worker';
+import {
+    GUN_MINIGUN,
+    GUN_PISTOL,
+    GUN_SHOOTGUN,
+    GunName,
+} from '../bullets/constants';
 import { BONUS_WORKER_TYPE } from '../types';
 
 export const BONUS_RADIUS = 9;
 export const BONUS_COLOR = '#5086da';
 export const BONUS_EXPIRED_TIME = 15000; // 15 seconds
+
+export const ammoBonusMap: Record<GunName, number> = {
+    [GUN_PISTOL]: 100,
+    [GUN_MINIGUN]: 500,
+    [GUN_SHOOTGUN]: 50,
+};
 
 export const processExpired =
     (worker: BonusWorker) => (deltaMilliseconds: number) => {
