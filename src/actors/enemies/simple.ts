@@ -7,6 +7,7 @@ const ENEMY_SPEED = 0.02;
 const ENEMY_HEALTH = 10;
 const ENEMY_REWARD = 100;
 const ENEMY_ATTACK = 10;
+const ENEMY_ATTACK_DELAY = 800; // 0.8 second
 
 export const simpleEnemyWorker = (position: Point) =>
     getEnemyWorker(
@@ -17,4 +18,5 @@ export const simpleEnemyWorker = (position: Point) =>
         ENEMY_HEALTH,
         ENEMY_REWARD,
         ENEMY_ATTACK,
+        ENEMY_ATTACK_DELAY,
     );

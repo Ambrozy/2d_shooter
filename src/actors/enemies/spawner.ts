@@ -8,6 +8,7 @@ const ENEMY_SPEED = 0;
 const ENEMY_HEALTH = 150;
 const ENEMY_REWARD = 500;
 const ENEMY_ATTACK = 0;
+const ENEMY_ATTACK_DELAY = 0; // 0 second
 
 const SPAWN_PERIOD = 5000;
 
@@ -17,6 +18,7 @@ const SPIDER_SPEED = 0.02;
 const SPIDER_HEALTH = 5;
 const SPIDER_REWARD = 100;
 const SPIDER_ATTACK = 15;
+const SPIDER_ATTACK_DELAY = 800; // 0.8 second
 
 export const spiderEnemyWorker = (position: Point) =>
     getEnemyWorker(
@@ -27,6 +29,7 @@ export const spiderEnemyWorker = (position: Point) =>
         SPIDER_HEALTH,
         SPIDER_REWARD,
         SPIDER_ATTACK,
+        SPIDER_ATTACK_DELAY,
     );
 
 export const spawnerEnemyWorker =
@@ -40,6 +43,7 @@ export const spawnerEnemyWorker =
             ENEMY_HEALTH,
             ENEMY_REWARD,
             ENEMY_ATTACK,
+            ENEMY_ATTACK_DELAY,
             { expiredTime: 0 },
         ),
         __getNextPosition(position: Point, deltaMilliseconds: number) {

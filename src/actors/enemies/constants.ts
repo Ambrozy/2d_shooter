@@ -31,15 +31,25 @@ export const getEnemyWorker = (
     health: number,
     reward: number,
     attack: number,
+    attackDelay: number,
     additionalParams?: Record<string, unknown>,
 ): EnemyWorker => ({
     ...getEmptyWorker(),
     type: ENEMY_WORKER_TYPE,
     deadAnimationTime: 100,
     position: { x, y, radius },
-    params: { health, reward, attack, ...additionalParams },
+    params: {
+        health,
+        reward,
+        attack,
+        attackDelay,
+        timeFromLastAttack: attackDelay,
+        ...additionalParams,
+    },
     render(deltaMilliseconds: number) {
         processDead(this)(deltaMilliseconds);
+        this.params.timeFromLastAttack += deltaMilliseconds;
+
         if (this.isDead) {
             drawDonut(
                 cameraMapping(this.position),
@@ -70,4 +80,13 @@ export const getEnemyWorker = (
         };
     },
     onDead: () => undefined,
+    getDamage() {
+        if (this.params.timeFromLastAttack >= this.params.attackDelay) {
+            this.params.timeFromLastAttack = 0;
+
+            return this.params.attack;
+        }
+
+        return 0;
+    },
 });

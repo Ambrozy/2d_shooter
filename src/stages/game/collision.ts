@@ -48,7 +48,7 @@ export const processCollision = (
         });
 
         if (!enemy.isDead && isCollision(player.position, enemy.position)) {
-            game.updateHealth(-enemy.params.attack);
+            game.updateHealth(-enemy.getDamage());
 
             if (game.health <= 0) {
                 player.isDead = true;

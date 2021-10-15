@@ -31,8 +31,11 @@ export interface EnemyWorker extends Worker {
         health: number;
         reward: number;
         attack: number;
-    };
+        attackDelay: number;
+        timeFromLastAttack: number;
+    } & Worker['params'];
     __getNextPosition: (position: Point, deltaMilliseconds: number) => Point;
+    getDamage: () => number;
     onDead: () => void;
 }
 

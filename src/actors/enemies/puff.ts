@@ -8,6 +8,7 @@ const ENEMY_SPEED = 0.02;
 const ENEMY_HEALTH = 30;
 const ENEMY_REWARD = 200;
 const ENEMY_ATTACK = 10;
+const ENEMY_ATTACK_DELAY = 800; // 0.8 second
 
 const CHILDREN_RADIUS = 5;
 const CHILDREN_COLOR = ENEMY_COLOR;
@@ -15,6 +16,7 @@ const CHILDREN_SPEED = 0.03;
 const CHILDREN_HEALTH = 10;
 const CHILDREN_REWARD = 100;
 const CHILDREN_ATTACK = 3;
+const CHILDREN_ATTACK_DELAY = 150; // 0.15 second
 
 export const puffChildrenEnemyWorker = (position: Point) =>
     getEnemyWorker(
@@ -25,6 +27,7 @@ export const puffChildrenEnemyWorker = (position: Point) =>
         CHILDREN_HEALTH,
         CHILDREN_REWARD,
         CHILDREN_ATTACK,
+        CHILDREN_ATTACK_DELAY,
     );
 
 export const puffEnemyWorker = (position: Point) => ({
@@ -36,6 +39,7 @@ export const puffEnemyWorker = (position: Point) => ({
         ENEMY_HEALTH,
         ENEMY_REWARD,
         ENEMY_ATTACK,
+        ENEMY_ATTACK_DELAY,
     ),
     onDead() {
         workManager.add(

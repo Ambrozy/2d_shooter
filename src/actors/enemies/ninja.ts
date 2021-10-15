@@ -8,7 +8,8 @@ const ENEMY_COLOR = '#383838';
 const ENEMY_SPEED = 0.05;
 const ENEMY_HEALTH = 30;
 const ENEMY_REWARD = 200;
-const ENEMY_ATTACK = 10;
+const ENEMY_ATTACK = 8;
+const ENEMY_ATTACK_DELAY = 500; // 0.5 second
 
 const MOVE_TIME = 1000;
 const DELAY_TIME = 3500;
@@ -27,6 +28,7 @@ export const ninjaEnemyWorker = (initialPosition: Point) => ({
         ENEMY_HEALTH,
         ENEMY_REWARD,
         ENEMY_ATTACK,
+        ENEMY_ATTACK_DELAY,
         {
             state: MOVE_STATE,
             expiredTime: 0,
