@@ -39,7 +39,10 @@ export interface EnemyWorker extends Worker {
 export interface BulletWorker extends Worker {
     params: {
         attack: number;
+        isLine: boolean;
     } & Worker['params'];
+    getSecondPosition: () => Point;
+    getDamage: (enemy: EnemyWorker) => number;
 }
 
 export type WorkerBuilder<T extends Worker> = (position: Point) => T;

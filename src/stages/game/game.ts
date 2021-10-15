@@ -10,13 +10,15 @@ import { camera, inverseCameraMapping } from '../../core/camera';
 import {
     addKeyListeners,
     controls,
+    MOUSE_LEFT_BUTTON,
+    mouseButtonMap,
     removeKeyListeners,
 } from '../../core/controls';
 import { game, INITIAL_AMMUNITION, MAX_HEALTH } from '../../core/game';
 import { getPlayerInstance, spawnPlayer } from '../../actors/player';
-import { spawnBullet } from '../../actors/bullet';
 import { spawnEnemySpawner } from '../../actors/enemies/enemySpawner';
 import { spawnBonusSpawner } from '../../actors/bonuses/bonusSpawner';
+import { playerGun } from '../../actors/bullets/playerGun';
 import {
     BONUS_WORKER_TYPE,
     BULLET_WORKER_TYPE,
@@ -36,10 +38,9 @@ const onMouseMove = (e: MouseEvent) => {
     });
     controls.mouseRotation = getRotationRelatedToPlayer(controls.mousePosition);
 };
-const onMouseDown = () => {
-    if (game.ammunition > 0) {
-        spawnBullet();
-        game.updateAmmo(-1);
+const onMouseDown = (e: MouseEvent) => {
+    if (mouseButtonMap[e.button] === MOUSE_LEFT_BUTTON) {
+        playerGun.shot();
     }
 };
 
@@ -58,6 +59,8 @@ export const gameScreen = {
         } else if (controls.pressedKeys.has('ArrowDown')) {
             playerInstance.moveDown();
         }
+
+        playerGun.render(deltaMilliseconds);
 
         const enemies = workManager.workers.filter(
             (worker: Worker) => worker.type === ENEMY_WORKER_TYPE,

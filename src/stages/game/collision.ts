@@ -5,10 +5,22 @@ import {
     PlayerWorker,
 } from '../../core/worker';
 import { game } from '../../core/game';
-import { isCollision } from '../../utils/helpers';
+import { isCollision, isLineCollision } from '../../utils/helpers';
 import { FREEZE_BONUS } from '../../core/bonusManager';
 
 const FREEZE_DAMAGE_FACTOR = 2;
+
+const isBulletCollision = (bullet: BulletWorker, enemy: EnemyWorker) => {
+    if (!bullet.params.isLine) {
+        return isCollision(bullet.position, enemy.position);
+    }
+
+    return isLineCollision(
+        bullet.position,
+        bullet.getSecondPosition(),
+        enemy.position,
+    );
+};
 
 export const processCollision = (
     player: PlayerWorker,
@@ -18,13 +30,14 @@ export const processCollision = (
 ) => {
     enemies.forEach((enemy) => {
         bullets.forEach((bullet) => {
-            if (!enemy.isDead && isCollision(bullet.position, enemy.position)) {
+            if (!enemy.isDead && isBulletCollision(bullet, enemy)) {
                 const multiplier = game.getBonusValue(FREEZE_BONUS)
                     ? FREEZE_DAMAGE_FACTOR
                     : 1;
 
-                enemy.params.health -= bullet.params.attack * multiplier;
+                enemy.params.health -= bullet.getDamage(enemy) * multiplier;
                 bullet.isDead = true;
+                bullet.deadTime = Infinity;
 
                 if (enemy.params.health <= 0) {
                     game.updateScore(enemy.params.reward);

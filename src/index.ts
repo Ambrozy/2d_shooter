@@ -21,7 +21,6 @@ const loop = (timestamp: number) => {
 
     clearScreen();
     screenManager.screen?.render(timestamp - lastRender);
-    // console.log(working.workers);
 
     lastRender = timestamp;
 

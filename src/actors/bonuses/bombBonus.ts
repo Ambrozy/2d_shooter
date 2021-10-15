@@ -1,7 +1,12 @@
 import { BULLET_WORKER_TYPE } from '../types';
 import { cameraMapping } from '../../core/camera';
 import { Point } from '../../core/types';
-import { getEmptyWorker, processDead, workManager } from '../../core/worker';
+import {
+    BulletWorker,
+    getEmptyWorker,
+    processDead,
+    workManager,
+} from '../../core/worker';
 import { drawCircle } from '../../utils/paint';
 import { BONUS_COLOR, BONUS_RADIUS, getBonusWorker } from './constants';
 
@@ -39,16 +44,22 @@ export const explosion = (position: Point) => {
     drawCircle(position, EXPLOSION_RADIUS, EXPLOSION_COLOR);
 };
 
-export const explosionWorker = ({ x, y }: Point) => ({
+export const explosionWorker = ({ x, y }: Point): BulletWorker => ({
     ...getEmptyWorker(),
     type: BULLET_WORKER_TYPE,
     deadAnimationTime: 100,
     isDead: true,
     position: { x, y, radius: EXPLOSION_RADIUS },
-    params: { attack: BOMB_ATTACK },
+    params: { attack: BOMB_ATTACK, isLine: false },
     render(deltaMilliseconds: number) {
         processDead(this)(deltaMilliseconds);
         explosion(cameraMapping(this.position));
+    },
+    getSecondPosition() {
+        return this.position;
+    },
+    getDamage() {
+        return this.params.attack;
     },
 });
 
