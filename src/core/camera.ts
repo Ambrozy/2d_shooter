@@ -2,8 +2,8 @@ import { Point } from './types';
 import { context } from './context';
 import { game } from './game';
 
-export const MAP_WIDTH = 1600;
-export const MAP_HEIGHT = 1200;
+export const MAP_WIDTH = 1200;
+export const MAP_HEIGHT = 800;
 
 export interface Camera {
     readonly x: number;

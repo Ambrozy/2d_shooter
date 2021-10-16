@@ -6,7 +6,7 @@ import { BONUS_COLOR, BONUS_RADIUS, getBonusWorker } from './constants';
 
 const SPEED_TEXT_HEIGHT = 10;
 const SPEED_COLOR = '#def6f2';
-const SPEED_BONUS_VALUE = 2;
+const SPEED_BONUS_VALUE = 1.5;
 
 export const speedBonus = (position: Point) => {
     drawCircle(position, BONUS_RADIUS, BONUS_COLOR);

@@ -15,10 +15,12 @@ import {
     removeKeyListeners,
 } from '../../core/controls';
 import { game, INITIAL_AMMUNITION, MAX_HEALTH } from '../../core/game';
+import { context } from '../../core/context';
 import { getPlayerInstance, spawnPlayer } from '../../actors/player';
 import { spawnEnemySpawner } from '../../actors/enemies/enemySpawner';
 import { spawnBonusSpawner } from '../../actors/bonuses/bonusSpawner';
 import { playerGun } from '../../actors/bullets/playerGun';
+import { GUN_PISTOL } from '../../actors/bullets/constants';
 import {
     BONUS_WORKER_TYPE,
     BULLET_WORKER_TYPE,
@@ -29,7 +31,6 @@ import { getRotationRelatedToPlayer } from '../../utils/playerHelpers';
 import { randomEdgePosition } from '../../utils/helpers';
 import { DEAD_SCREEN, GAME_SCREEN, WIN_SCREEN } from '../types';
 import { processCollision } from './collision';
-import { context } from '../../core/context';
 
 const onMouseMove = (e: MouseEvent) => {
     controls.mousePosition = inverseCameraMapping({
@@ -99,6 +100,7 @@ export const gameScreen = {
 
         camera.reset();
         workManager.reset();
+        playerGun.setGun(GUN_PISTOL);
         spawnPlayer();
         spawnBonusSpawner();
         for (let i = 0; i < 100; i++) {

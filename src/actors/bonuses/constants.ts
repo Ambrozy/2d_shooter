@@ -21,9 +21,12 @@ export const ammoBonusMap: Record<GunName, number> = {
 
 export const processExpired =
     (worker: BonusWorker) => (deltaMilliseconds: number) => {
-        worker.params.expiredTime += deltaMilliseconds;
+        worker.params.lifeTime += deltaMilliseconds;
 
-        if (!worker.isDead && worker.params.expiredTime >= BONUS_EXPIRED_TIME) {
+        if (
+            !worker.isDead &&
+            worker.params.lifeTime >= worker.params.expiredTime
+        ) {
             worker.isDead = true;
         }
     };
@@ -31,11 +34,12 @@ export const processExpired =
 export const getBonusWorker = (
     { x, y }: Point,
     render: (position: Point) => void,
+    expiredTime = BONUS_EXPIRED_TIME,
 ): BonusWorker => ({
     ...getEmptyWorker(),
     type: BONUS_WORKER_TYPE,
     position: { x, y, radius: BONUS_RADIUS },
-    params: { expiredTime: 0 },
+    params: { lifeTime: 0, expiredTime },
     render(deltaMilliseconds: number) {
         processDead(this)(deltaMilliseconds);
         processExpired(this)(deltaMilliseconds);

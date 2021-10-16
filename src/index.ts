@@ -6,13 +6,14 @@ import { gameScreen } from './stages/game/game';
 import { deadScreen } from './stages/dead';
 import { winScreen } from './stages/win';
 import { printFPS } from './utils/fps';
+import { BACKGROUND_COLOR } from './constants';
 
 import './index.scss';
 
 let lastRender = 0;
 
 const clearScreen = () => {
-    context.context.fillStyle = '#000';
+    context.context.fillStyle = BACKGROUND_COLOR;
     context.context.fillRect(0, 0, context.canvas.width, context.canvas.height);
 };
 

@@ -14,6 +14,7 @@ export interface Worker extends Record<string, unknown> {
 
 export interface BonusWorker extends Worker {
     params: {
+        lifeTime: number;
         expiredTime: number;
     };
     onBonus: () => void;

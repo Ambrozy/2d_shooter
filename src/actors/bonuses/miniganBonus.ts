@@ -13,7 +13,7 @@ import { GUN_MINIGUN } from '../bullets/constants';
 const BONUS_LINE_HEIGHT = 7;
 const BONUS_LINE_OFFSET = 3;
 const BONUS_LINE_WIDTH = 1;
-const BONUS_LINE_COLOR = '#ff0000';
+const BONUS_LINE_COLOR = '#b70000';
 
 export const minigunBonus = (position: Point) => {
     drawCircle(position, BONUS_RADIUS, BONUS_COLOR);

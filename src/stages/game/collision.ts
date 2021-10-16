@@ -6,7 +6,8 @@ import {
 } from '../../core/worker';
 import { game } from '../../core/game';
 import { isCollision, isLineCollision } from '../../utils/helpers';
-import { FREEZE_BONUS } from '../../core/bonusManager';
+import { FREEZE_BONUS, TELEKINESIS_BONUS } from '../../core/bonusManager';
+import { controls } from '../../core/controls';
 
 const FREEZE_DAMAGE_FACTOR = 2;
 
@@ -47,7 +48,11 @@ export const processCollision = (
             }
         });
 
-        if (!enemy.isDead && isCollision(player.position, enemy.position)) {
+        if (
+            !game.getBonusValue(FREEZE_BONUS) &&
+            !enemy.isDead &&
+            isCollision(player.position, enemy.position)
+        ) {
             game.updateHealth(-enemy.getDamage());
 
             if (game.health <= 0) {
@@ -57,7 +62,18 @@ export const processCollision = (
     });
 
     bonuses.forEach((bonus) => {
-        if (!bonus.isDead && isCollision(player.position, bonus.position)) {
+        if (
+            !bonus.isDead &&
+            (isCollision(player.position, bonus.position) ||
+                (game.getBonusValue(TELEKINESIS_BONUS) &&
+                    isCollision(
+                        {
+                            ...controls.mousePosition,
+                            radius: 1,
+                        },
+                        bonus.position,
+                    )))
+        ) {
             bonus.isDead = true;
             bonus.onBonus();
         }

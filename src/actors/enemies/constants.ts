@@ -2,7 +2,7 @@ import { Point } from '../../core/types';
 import { EnemyWorker, getEmptyWorker, processDead } from '../../core/worker';
 import { cameraMapping } from '../../core/camera';
 import { game } from '../../core/game';
-import { FREEZE_BONUS } from '../../core/bonusManager';
+import { FREEZE_BONUS, FREEZE_BORDER_COLOR } from '../../core/bonusManager';
 import { getRotationRelatedToPlayer } from '../../utils/playerHelpers';
 import { drawCircle, drawDonut } from '../../utils/paint';
 import { ENEMY_WORKER_TYPE } from '../types';
@@ -67,6 +67,14 @@ export const getEnemyWorker = (
 
             this.position.x = nextPosition.x;
             this.position.y = nextPosition.y;
+        }
+
+        if (game.getBonusValue(FREEZE_BONUS)) {
+            drawCircle(
+                cameraMapping(this.position),
+                radius + 1,
+                FREEZE_BORDER_COLOR,
+            );
         }
 
         drawCircle(cameraMapping(this.position), radius, color);

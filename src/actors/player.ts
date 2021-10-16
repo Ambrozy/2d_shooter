@@ -14,9 +14,14 @@ import {
 } from '../core/camera';
 import { context } from '../core/context';
 import { controls } from '../core/controls';
-import { drawCircle, drawDonut } from '../utils/paint';
-import { PLAYER_WORKER_TYPE } from './types';
 import { game } from '../core/game';
+import {
+    UNTOUCHABLE_BONUS,
+    UNTOUCHABLE_BORDER_COLOR,
+} from '../core/bonusManager';
+import { drawCircle, drawDonut } from '../utils/paint';
+import { BACKGROUND_COLOR } from '../constants';
+import { PLAYER_WORKER_TYPE } from './types';
 
 export const PLAYER_RADIUS = 12;
 export const PLAYER_COLOR = '#91e1ff';
@@ -33,6 +38,11 @@ export const player = ({
     position: { x, y },
     gunRotation: { sin, cos },
 }: PlayerProps) => {
+    if (game.getBonusValue(UNTOUCHABLE_BONUS)) {
+        drawCircle({ x, y }, PLAYER_RADIUS + 2, UNTOUCHABLE_BORDER_COLOR);
+        drawCircle({ x, y }, PLAYER_RADIUS + 1, BACKGROUND_COLOR);
+    }
+
     drawCircle({ x, y }, PLAYER_RADIUS, PLAYER_COLOR);
     drawCircle(
         { x: x + cos * PLAYER_RADIUS, y: y + sin * PLAYER_RADIUS },
