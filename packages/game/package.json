@@ -1,0 +1,18 @@
+{
+  "name": "@ambrozy/game",
+  "version": "1.0.0",
+  "main": "export.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --config ../../@devops/webpack.prod.config.js",
+    "start": "webpack serve --config ../../@devops/webpack.game.config.js --open",
+    "test": "jest",
+    "deploy": "git subtree push --prefix build origin gh-pages"
+  },
+  "devDependencies": {},
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11"
+  ]
+}

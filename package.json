@@ -1,16 +1,17 @@
 {
-  "name": "2d_shooter",
+  "name": "@ambrozy/ecosystem",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "private": true,
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "start": "webpack serve --config webpack.config.js --open",
+    "build:game": "yarn workspace @ambrozy/game build",
+    "start:game": "yarn workspace @ambrozy/game start",
+    "start:train": "webpack serve --config @devops/webpack.train.config.js --open",
     "test": "jest",
-    "predeploy": "yarn run build",
+    "predeploy": "webpack --config @devops/webpack.prod.config.js",
     "deploy": "git subtree push --prefix build origin gh-pages"
   },
-  "dependencies": {},
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.29.3",
     "@typescript-eslint/parser": "^4.29.3",
@@ -36,11 +37,15 @@
     "typescript": "^4.4.2",
     "webpack": "^5.51.1",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.0.0"
+    "webpack-dev-server": "^4.0.0",
+    "webpack-merge": "^5.8.0"
   },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11"
+  ],
+  "workspaces": [
+    "packages/*"
   ]
 }

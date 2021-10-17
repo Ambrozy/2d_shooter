@@ -69,5 +69,5 @@ module.exports = {
 			{ blankLine: 'any', prev: '*', next: 'return' },
 		],
     },
-	ignorePatterns: ['webpack.config.js'],
+	ignorePatterns: ['*.config.js'],
 };

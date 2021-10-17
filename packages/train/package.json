@@ -1,0 +1,20 @@
+{
+  "name": "@ambrozy/train",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack serve --config ../../@devops/webpack.train.config.js --open",
+    "test": "jest",
+    "run": "./node_modules/.bin/babel-node index.ts"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^3.9.0"
+  },
+  "devDependencies": {},
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11"
+  ]
+}

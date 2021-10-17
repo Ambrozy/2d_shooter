@@ -19,5 +19,10 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "typeRoots": ["./node_modules/@types", "./@types"]
-  }
+  },
+  "exclude": [
+    "**/__tests__/**/*",
+    "**/__mocks__/**/*",
+    "**/build/**/*"
+  ]
 }
