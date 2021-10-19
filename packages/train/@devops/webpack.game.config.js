@@ -55,7 +55,6 @@ module.exports = {
         new ForkTsCheckerWebpackPlugin(),
     ],
     resolve: {
-        // Add `.ts` and `.tsx` as a resolvable extension.
         extensions: ['.ts', '.tsx', '.js', 'scss'],
         alias: {
             '@ambrozy/game': path.resolve(__dirname, '../packages/game'),

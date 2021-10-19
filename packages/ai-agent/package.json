@@ -1,15 +1,13 @@
 {
-  "name": "@ambrozy/game",
+  "name": "@ambrozy/ai-agent",
   "version": "1.0.0",
-  "main": "./lib/export.js",
-  "types": "./lib/export.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "license": "MIT",
   "scripts": {
     "build": "run-p build:*",
     "build:types": "tsc -p tsconfig.build.json --emitDeclarationOnly --newline lf",
     "build:lib": "webpack --config webpack.lib.config.js",
-    "build:game": "webpack --config webpack.prod.config.js --output-path build",
-    "start": "webpack serve --config webpack.game.config.js --open",
     "test": "jest"
   },
   "devDependencies": {

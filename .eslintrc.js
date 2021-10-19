@@ -69,5 +69,14 @@ module.exports = {
 			{ blankLine: 'any', prev: '*', next: 'return' },
 		],
     },
-	ignorePatterns: ['*.config.js'],
+	globals: {
+		describe: true,
+		it: true,
+		jest: true,
+		beforeEach: true,
+		beforeAll: true,
+		afterEach: true,
+		expect: true,
+		afterAll: true,
+	},
 };

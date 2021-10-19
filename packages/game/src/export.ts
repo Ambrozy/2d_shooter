@@ -13,14 +13,12 @@ import { playerGun } from './actors/bullets/playerGun';
 import './index.scss';
 
 export {
-    GunName,
     GUN_PISTOL,
     GUN_MINIGUN,
     GUN_SHOOTGUN,
 } from './actors/bullets/constants';
 
 export {
-    TemporaryBonusNames,
     SPEED_BONUS,
     EXP_SPEED_BONUS,
     FREEZE_BONUS,
@@ -59,19 +57,17 @@ export interface NextStateProps {
 
 /**
  * Setup screen and game settings
- * @param canvasSize
+ * @param canvas
  */
-export const initGame = (canvasSize: { width: number; height: number }) => {
+export const initGame = (canvas: HTMLCanvasElement) => {
+    context.constructor(canvas);
+    game.__updateHTML = () => undefined; // disable html rendering
+
     screenManager.registerScreen(welcomeScreen);
     screenManager.registerScreen(gameScreen);
     screenManager.registerScreen(deadScreen);
     screenManager.registerScreen(winScreen);
     screenManager.changeScreen(WELCOME_SCREEN);
-
-    context.constructor(document.createElement('canvas'));
-    context.canvas.width = canvasSize.width;
-    context.canvas.height = canvasSize.height;
-    game.__updateHTML = () => undefined;
 };
 
 /**
@@ -84,13 +80,13 @@ export const startGame = () => {
 /**
  * Process one frame of game
  *
- * @params control state
+ * @params control state & deltaMilliseconds
  * @return game state
  */
 export const getNextGameState = ({
-    deltaMilliseconds = 16,
     mousePosition,
     buttons = new Set(),
+    deltaMilliseconds = 16,
 }: NextStateProps) => {
     // setup controls
     controls.pressedKeys.clear();

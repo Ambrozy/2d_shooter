@@ -4,11 +4,12 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "webpack serve --config ../../@devops/webpack.train.config.js --open",
+    "start": "webpack serve --config ../game/@devops/webpack.train.config.js --open",
     "test": "jest",
     "run": "./node_modules/.bin/babel-node index.ts"
   },
   "dependencies": {
+    "@ambrozy/game": "*",
     "@tensorflow/tfjs": "^3.9.0"
   },
   "devDependencies": {},

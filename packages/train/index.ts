@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import '@ambrozy/game';
+// import { getNextGameState } from '@ambrozy/game';
 
 // Define a model for linear regression.
 const model = tf.sequential();
