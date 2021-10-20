@@ -12,11 +12,11 @@ const postCss = {
     },
 };
 
-module.exports = {
+module.exports.getConfig = (basePath) => ({
     mode: 'development',
-    entry: path.resolve(__dirname, '../packages/game/index.ts'),
+    entry: path.resolve(basePath, './src/index.ts'),
     output: {
-        path: path.resolve(__dirname, '../build'),
+        path: path.resolve(basePath, './build'),
         filename: 'index.bundle.js',
     },
     module: {
@@ -46,10 +46,10 @@ module.exports = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, '../public/index.html'),
+            template: path.resolve(basePath, './public/index.html'),
         }),
         new ESLintPlugin({
-            context: path.resolve(__dirname, '../packages'),
+            context: path.resolve(basePath, './src'),
             extensions: ['js', 'ts'],
         }),
         new ForkTsCheckerWebpackPlugin(),
@@ -57,8 +57,12 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js', 'scss'],
         alias: {
-            '@ambrozy/game': path.resolve(__dirname, '../packages/game'),
-            '@ambrozy/train': path.resolve(__dirname, '../packages/train'),
+            '@ambrozy/ai-agent': path.resolve(
+                __dirname,
+                '../packages/ai-agent/src/',
+            ),
+            '@ambrozy/game': path.resolve(__dirname, '../packages/game/src/'),
+            '@ambrozy/train': path.resolve(__dirname, '../packages/train/src/'),
         },
     },
-};
+});
