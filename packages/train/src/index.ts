@@ -2,7 +2,7 @@
 // import { drawHistory } from './interface/historyCurve';
 import './interface/historyCurve';
 import { logger } from './interface/logger';
-import { emulateAsync, prepareEnvironment } from './processing/emulate';
+import { emulateAsync, prepareEnvironment } from './environment/emulate';
 import { randomAgent } from './agent/randomAgent';
 
 import './index.scss';

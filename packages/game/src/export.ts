@@ -7,24 +7,25 @@ import { winScreen } from './stages/win';
 import { context } from './core/context';
 import { game } from './core/game';
 import { controls, MOUSE_LEFT_BUTTON } from './core/controls';
-import { TemporaryBonusNames, BonusState, Point } from './core/types';
-import { playerGun } from './actors/bullets/playerGun';
-
-import './index.scss';
-
-export {
-    GUN_PISTOL,
-    GUN_MINIGUN,
-    GUN_SHOOTGUN,
-} from './actors/bullets/constants';
-
-export {
+import {
+    TemporaryBonusNames,
+    BonusState,
+    Point,
     SPEED_BONUS,
     EXP_SPEED_BONUS,
     FREEZE_BONUS,
     UNTOUCHABLE_BONUS,
     TELEKINESIS_BONUS,
 } from './core/types';
+import { playerGun } from './actors/bullets/playerGun';
+import {
+    GUN_PISTOL,
+    GUN_MINIGUN,
+    GUN_SHOOTGUN,
+    GunName,
+} from './actors/bullets/constants';
+
+import './index.scss';
 
 export * from './stages/types';
 
@@ -36,6 +37,20 @@ export const possibleButtons = [
     'ArrowDown',
     'Enter',
 ];
+export const possibleBonuses = [
+    SPEED_BONUS,
+    EXP_SPEED_BONUS,
+    FREEZE_BONUS,
+    UNTOUCHABLE_BONUS,
+    TELEKINESIS_BONUS,
+];
+export const possibleGuns = [GUN_PISTOL, GUN_MINIGUN, GUN_SHOOTGUN];
+
+const playerGunMap: Record<GunName, [number, number, number]> = {
+    GUN_PISTOL: [1, 0, 0],
+    GUN_MINIGUN: [0, 1, 0],
+    GUN_SHOOTGUN: [0, 0, 1],
+};
 
 export interface NextStateProps {
     /**
@@ -128,20 +143,19 @@ export const getNextGameState = ({
     );
 
     const bonuses = game.bonuses as Record<TemporaryBonusNames, BonusState>;
-    const bonusNames = Object.keys(bonuses) as TemporaryBonusNames[];
-    const bonusTimes = bonusNames.map(
-        (bonusName) =>
-            bonuses[bonusName].timeLimit - bonuses[bonusName].actionTime,
+    const bonusTimes = possibleBonuses.map((bonusName: TemporaryBonusNames) =>
+        bonuses[bonusName]
+            ? bonuses[bonusName].timeLimit - bonuses[bonusName].actionTime
+            : 0,
     );
 
     return {
         image,
-        bonusNames,
         bonusTimes,
         score: game.score,
         health: game.health,
         ammunition: game.ammunition,
-        gun: playerGun.gunName,
+        gun: playerGunMap[playerGun.gunName],
         speed: game.getPlayerSpeed(),
         screen: screenManager.screen?.name as ScreenNameType,
     };

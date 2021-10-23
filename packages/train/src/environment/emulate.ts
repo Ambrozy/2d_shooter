@@ -1,6 +1,6 @@
-import { Agent } from '../agent/types';
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from '../agent/model/normalization';
+import type { Agent, GameState } from '../agent/types';
 import {
-    NextStateProps,
     initGame,
     startGame,
     getNextGameState,
@@ -11,9 +11,6 @@ import {
 export const LOOSE = -1;
 export const WIN = 1;
 export const DEFAULT = 0;
-
-const CANVAS_WIDTH = 600;
-const CANVAS_HEIGHT = 400;
 
 export type emulateReturnType = {
     finalState: typeof LOOSE | typeof WIN | typeof DEFAULT;
@@ -37,20 +34,9 @@ export const prepareEnvironment = () => {
     startGame();
 };
 
-const convertControls = (state: NextStateProps): NextStateProps => ({
-    ...state,
-    mousePosition: {
-        x: state.mousePosition.x * CANVAS_WIDTH,
-        y: state.mousePosition.y * CANVAS_HEIGHT,
-    },
-});
-
-export const gameLoop = (
-    agent: Agent,
-    prevGameState: ReturnType<typeof getNextGameState>,
-) => {
+export const gameLoop = (agent: Agent, prevGameState: GameState) => {
     const gameControls = agent.nextState(prevGameState);
-    return getNextGameState(convertControls(gameControls));
+    return getNextGameState(gameControls);
 };
 
 export const emulate = (agent: Agent, loops: number): emulateReturnType => {
@@ -61,8 +47,7 @@ export const emulate = (agent: Agent, loops: number): emulateReturnType => {
 
         if (gameState.screen === DEAD_SCREEN) {
             return { finalState: -1, loops: i + 1, score: gameState.score };
-        }
-        if (gameState.screen === WIN_SCREEN) {
+        } else if (gameState.screen === WIN_SCREEN) {
             return { finalState: 1, loops: i + 1, score: gameState.score };
         }
     }

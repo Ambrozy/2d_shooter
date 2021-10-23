@@ -1,20 +1,21 @@
 import { Agent } from './types';
+import { denormalizeControls } from './model/normalization';
 
 export const randomAgent: Agent = {
     nextState() {
-        return {
+        return denormalizeControls({
             mousePosition: {
                 x: Math.random(),
                 y: Math.random(),
             },
             buttons: [
-                Boolean(Math.round(Math.random())),
-                Boolean(Math.round(Math.random())),
-                Boolean(Math.round(Math.random())),
-                Boolean(Math.round(Math.random())),
-                Boolean(Math.round(Math.random())),
-                Boolean(Math.round(Math.random())),
+                Math.random(),
+                Math.random(),
+                Math.random(),
+                Math.random(),
+                Math.random(),
+                Math.random(),
             ],
-        };
+        });
     },
 };
