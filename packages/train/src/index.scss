@@ -1,0 +1,14 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-size: 14px;
+}
+
+canvas {
+  user-select: none;
+  border: 1px solid #6c6cff;
+  margin: 10px;
+}

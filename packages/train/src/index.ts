@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 // import { getNextGameState } from '@ambrozy/game';
+import { drawHistory } from './historyCurve';
 
 // Define a model for linear regression.
 const model = tf.sequential();
@@ -23,10 +24,11 @@ model
             },
         },
     })
-    .then(() => {
+    .then((history) => {
         // Use the model to do inference on a data point the model hasn't seen before:
         const result = model.predict(tf.tensor2d([5], [1, 1]));
 
         // Open the browser devtools to see the output
-        console.log(result.toString());
+        console.log(result.toString(), history.history);
+        drawHistory(history.history as Record<string, number[]>);
     });

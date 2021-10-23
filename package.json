@@ -9,7 +9,7 @@
     "build:ai-agent": "yarn workspace @ambrozy/ai-agent build",
     "build:game": "yarn workspace @ambrozy/game build",
     "start:game": "yarn workspace @ambrozy/game start",
-    "start:train": "webpack serve --config packages/game/@devops/webpack.train.config.js --open",
+    "start:train": "yarn workspace @ambrozy/train start",
     "test": "jest",
     "deploy": "git subtree push --prefix packages/game/build origin gh-pages"
   },
