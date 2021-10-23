@@ -1,5 +1,6 @@
 import { Agent } from '../agent/types';
 import {
+    NextStateProps,
     initGame,
     startGame,
     getNextGameState,
@@ -11,9 +12,13 @@ export const LOOSE = -1;
 export const WIN = 1;
 export const DEFAULT = 0;
 
+const CANVAS_WIDTH = 600;
+const CANVAS_HEIGHT = 400;
+
 export type emulateReturnType = {
     finalState: typeof LOOSE | typeof WIN | typeof DEFAULT;
     loops: number;
+    score: number;
 };
 
 export const getInitialGameState = () =>
@@ -23,21 +28,29 @@ export const getInitialGameState = () =>
         deltaMilliseconds: 0,
     });
 
+export const prepareEnvironment = () => {
+    const canvas = document.getElementById('game') as HTMLCanvasElement;
+
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+    initGame(canvas);
+    startGame();
+};
+
+const convertControls = (state: NextStateProps): NextStateProps => ({
+    ...state,
+    mousePosition: {
+        x: state.mousePosition.x * CANVAS_WIDTH,
+        y: state.mousePosition.y * CANVAS_HEIGHT,
+    },
+});
+
 export const gameLoop = (
     agent: Agent,
     prevGameState: ReturnType<typeof getNextGameState>,
 ) => {
     const gameControls = agent.nextState(prevGameState);
-    return getNextGameState(gameControls);
-};
-
-export const prepareEnvironment = () => {
-    const canvas = document.getElementById('game') as HTMLCanvasElement;
-
-    canvas.width = 600;
-    canvas.height = 400;
-    initGame(canvas);
-    startGame();
+    return getNextGameState(convertControls(gameControls));
 };
 
 export const emulate = (agent: Agent, loops: number): emulateReturnType => {
@@ -47,14 +60,14 @@ export const emulate = (agent: Agent, loops: number): emulateReturnType => {
         gameState = gameLoop(agent, gameState);
 
         if (gameState.screen === DEAD_SCREEN) {
-            return { finalState: -1, loops: i + 1 };
+            return { finalState: -1, loops: i + 1, score: gameState.score };
         }
         if (gameState.screen === WIN_SCREEN) {
-            return { finalState: 1, loops: i + 1 };
+            return { finalState: 1, loops: i + 1, score: gameState.score };
         }
     }
 
-    return { finalState: 0, loops };
+    return { finalState: 0, loops, score: gameState.score };
 };
 
 export const emulateAsync = (
@@ -71,14 +84,22 @@ export const emulateAsync = (
 
             if (iteration < loops) {
                 if (gameState.screen === DEAD_SCREEN) {
-                    resolve({ finalState: -1, loops: iteration + 1 });
+                    resolve({
+                        finalState: -1,
+                        loops: iteration + 1,
+                        score: gameState.score,
+                    });
                 } else if (gameState.screen === WIN_SCREEN) {
-                    resolve({ finalState: 1, loops: iteration + 1 });
+                    resolve({
+                        finalState: 1,
+                        loops: iteration + 1,
+                        score: gameState.score,
+                    });
                 } else {
                     loop(resolve);
                 }
             } else {
-                resolve({ finalState: 0, loops });
+                resolve({ finalState: 0, loops, score: gameState.score });
             }
         }, 0);
     }
