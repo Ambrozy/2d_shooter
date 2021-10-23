@@ -112,12 +112,18 @@ export const gameScreen = {
         game.health = 100;
         game.ammunition = 100;
         game.bonuses = {};
-        statisticsRenderer.constructor(game);
+
+        if (game.useHTMLRendering) {
+            statisticsRenderer.constructor(game);
+        }
     },
     destructor() {
         context.canvas.removeEventListener('mousemove', onMouseMove);
         context.canvas.removeEventListener('mousedown', onMouseDown);
         removeKeyListeners();
-        statisticsRenderer.destructor();
+
+        if (game.useHTMLRendering) {
+            statisticsRenderer.destructor();
+        }
     },
 };

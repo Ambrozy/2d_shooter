@@ -28,13 +28,14 @@ export {
 
 export * from './stages/types';
 
-export type PossibleButtons =
-    | typeof MOUSE_LEFT_BUTTON
-    | 'ArrowRight'
-    | 'ArrowLeft'
-    | 'ArrowUp'
-    | 'ArrowDown'
-    | 'Enter';
+export const possibleButtons = [
+    MOUSE_LEFT_BUTTON,
+    'ArrowRight',
+    'ArrowLeft',
+    'ArrowUp',
+    'ArrowDown',
+    'Enter',
+];
 
 export interface NextStateProps {
     /**
@@ -52,7 +53,14 @@ export interface NextStateProps {
      * Array of pressed buttons
      * @default new Set()
      */
-    buttons: Set<PossibleButtons>;
+    buttons: [
+        boolean, // 'MouseLeft'
+        boolean, // 'ArrowRight'
+        boolean, // 'ArrowLeft'
+        boolean, // 'ArrowUp'
+        boolean, // 'ArrowDown'
+        boolean, // 'Enter'
+    ];
 }
 
 /**
@@ -61,7 +69,7 @@ export interface NextStateProps {
  */
 export const initGame = (canvas: HTMLCanvasElement) => {
     context.constructor(canvas);
-    game.__updateHTML = () => undefined; // disable html rendering
+    game.useHTMLRendering = false;
 
     screenManager.registerScreen(welcomeScreen);
     screenManager.registerScreen(gameScreen);
@@ -85,19 +93,24 @@ export const startGame = () => {
  */
 export const getNextGameState = ({
     mousePosition,
-    buttons = new Set(),
+    buttons,
     deltaMilliseconds = 16,
 }: NextStateProps) => {
     // setup controls
     controls.pressedKeys.clear();
-    buttons.forEach((button) => controls.pressedKeys.add(button));
+    buttons.forEach((button, index) => {
+        if (button) {
+            controls.pressedKeys.add(possibleButtons[index]);
+        }
+    });
     // emulate mouse events
     if (screenManager.screen?.name === GAME_SCREEN) {
         onMouseMove({
             offsetX: mousePosition.x,
             offsetY: mousePosition.y,
         } as MouseEvent);
-        if (buttons.has(MOUSE_LEFT_BUTTON)) {
+        // MouseLeft
+        if (buttons[0]) {
             onMouseDown({ button: 0 } as MouseEvent);
         }
     }

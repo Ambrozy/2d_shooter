@@ -1,34 +1,46 @@
-import * as tf from '@tensorflow/tfjs';
-// import { getNextGameState } from '@ambrozy/game';
-import { drawHistory } from './historyCurve';
+// import * as tf from '@tensorflow/tfjs';
+// import { drawHistory } from './interface/historyCurve';
+import './interface/historyCurve';
+import { logger } from './interface/logger';
+import { emulateAsync, prepareEnvironment } from './processing/emulate';
+import { randomAgent } from './agent/randomAgent';
 
-// Define a model for linear regression.
-const model = tf.sequential();
+import './index.scss';
 
-model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
+// // Define a model for linear regression.
+// const model = tf.sequential();
+//
+// model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
+//
+// model.compile({ loss: 'meanSquaredError', optimizer: 'sgd' });
+//
+// async function train(xs: tf.Tensor2D, ys: tf.Tensor2D, epochs: number) {
+//     const history = await model.fit(xs, ys, { epochs });
+//
+//     // Use the model to do inference on a data point the model hasn't seen before:
+//     const result = model.predict(tf.tensor2d([5], [1, 1]));
+//
+//     // Open the browser devtools to see the output
+//     logger.log(result.toString());
+//
+//     drawHistory(history.history as Record<string, number[]>);
+// }
+//
+// // Generate some synthetic data for train.
+// const xs = tf.tensor2d([1, 2, 3, 4], [4, 1]);
+// const ys = tf.tensor2d([1, 3, 5, 7], [4, 1]);
+//
+// // Train the model using the data.
+// train(xs, ys, 10);
 
-model.compile({ loss: 'meanSquaredError', optimizer: 'sgd' });
+logger.log('Start');
 
-// Generate some synthetic data for train.
-const xs = tf.tensor2d([1, 2, 3, 4], [4, 1]);
-const ys = tf.tensor2d([1, 3, 5, 7], [4, 1]);
-
-// Train the model using the data.
-model
-    .fit(xs, ys, {
-        epochs: 10,
-        verbose: 1,
-        callbacks: {
-            onEpochBegin(epoch, log) {
-                console.log(epoch, log);
-            },
-        },
-    })
-    .then((history) => {
-        // Use the model to do inference on a data point the model hasn't seen before:
-        const result = model.predict(tf.tensor2d([5], [1, 1]));
-
-        // Open the browser devtools to see the output
-        console.log(result.toString(), history.history);
-        drawHistory(history.history as Record<string, number[]>);
+try {
+    prepareEnvironment();
+    emulateAsync(randomAgent, 1000).then((result) => {
+        logger.log('End with result:', result);
     });
+} catch (e) {
+    logger.error(e);
+    throw e;
+}

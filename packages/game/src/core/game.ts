@@ -16,7 +16,7 @@ export interface GameState {
     health: number;
     ammunition: number;
     bonuses: Partial<Record<TemporaryBonusNames, BonusState>>;
-    __updateHTML: () => void;
+    useHTMLRendering: boolean;
     readonly addBonus: (
         bonusName: TemporaryBonusNames,
         value?: number,
@@ -37,9 +37,7 @@ export const game: GameState = {
     health: 100,
     ammunition: 100,
     bonuses: {},
-    __updateHTML() {
-        statisticsRenderer.update(this);
-    },
+    useHTMLRendering: true,
     getPlayerSpeed() {
         return PLAYER_SPEED * (this.getBonusValue(SPEED_BONUS) || 1);
     },
@@ -82,6 +80,9 @@ export const game: GameState = {
                 delete this.bonuses[bonusName];
             }
         });
-        this.__updateHTML();
+
+        if (this.useHTMLRendering) {
+            statisticsRenderer.update(this);
+        }
     },
 };

@@ -59,10 +59,10 @@ module.exports.getConfig = (basePath) => ({
         alias: {
             '@ambrozy/ai-agent': path.resolve(
                 __dirname,
-                '../packages/ai-agent/src/',
+                '../packages/ai-agent/',
             ),
-            '@ambrozy/game': path.resolve(__dirname, '../packages/game/src/'),
-            '@ambrozy/train': path.resolve(__dirname, '../packages/train/src/'),
+            '@ambrozy/game': path.resolve(__dirname, '../packages/game/'),
+            '@ambrozy/train': path.resolve(__dirname, '../packages/train/'),
         },
     },
 });

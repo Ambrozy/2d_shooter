@@ -1,8 +1,6 @@
 import flatten from 'lodash/flatten';
 
-import './index.scss';
-
-const canvas = document.getElementsByTagName('canvas')[0];
+const canvas = document.getElementById('curve') as HTMLCanvasElement;
 const context = canvas.getContext('2d');
 const colors = ['red', 'blue', 'orange', 'green', 'purple', 'aqua'];
 const axisValueOffset = 20;
